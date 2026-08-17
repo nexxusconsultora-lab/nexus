@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Selector de Temas · Consultora</title>
+<meta name="description" content="Nexus: el arte de la política, el poder de la conexión. Ruleta de formación experta en política, derecho, persuasión y estrategia.">
+<meta property="og:title" content="NEXUS — Selector de Temas">
+<meta property="og:description" content="El arte de la política, el poder de la conexión. Formación experta interactiva.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #070d16;
+    --bg-2: #0b1626;
+    --amber: #f7941d;
+    --red: #e6432a;
+    --amber-dim: rgba(247,148,29,0.35);
+    --red-dim: rgba(230,67,42,0.35);
+    --panel: #0e1a2c;
+    --line: rgba(247,148,29,0.12);
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ background: radial-gradient(ellipse at 50% -10%, var(--bg-2) 0%, var(--bg) 55%); }
+  body{
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .display-font{
+    font-family: 'Archivo Black', sans-serif;
+    letter-spacing: -0.01em;
+  }
+  .nexus-gradient-text{
+    background: linear-gradient(90deg, var(--amber) 0%, var(--red) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* --- Bulb strip, evokes an old marquee row of lights --- */
+  .bulb-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+  }
+  .bulb{
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--amber-dim);
+    box-shadow: 0 0 4px var(--amber-dim);
+  }
+  .bulb.lit{
+    background: var(--amber);
+    box-shadow: 0 0 8px 1px var(--amber), 0 0 16px 2px var(--red-dim);
+    animation: bulbPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes bulbPulse{
+    0%,100%{ opacity: 1; }
+    50%{ opacity: 0.45; }
+  }
+
+  #reel-viewport{
+    position: relative;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+  }
+  #reel-strip{
+    position: absolute;
+    left: 0; right: 0;
+    will-change: transform;
+  }
+  .reel-item{
+    position: absolute;
+    left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 1.25rem;
+    transition: opacity 120ms linear, filter 120ms linear;
+  }
+  .center-line-frame{
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .center-line-frame::before,
+  .center-line-frame::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber-dim) 20%, var(--red-dim) 80%, transparent);
+  }
+  .center-line-frame::before{ top: -1px; }
+  .center-line-frame::after{ bottom: -1px; }
+
+  .glow-pop{
+    animation: popGlow 620ms cubic-bezier(.2,1.2,.3,1) both;
+  }
+  @keyframes popGlow{
+    0%{ transform: scale(1); text-shadow: none; }
+    35%{ transform: scale(1.14); text-shadow: 0 0 18px var(--amber), 0 0 42px var(--amber-dim), 0 0 70px var(--red-dim); }
+    65%{ transform: scale(0.97); }
+    100%{ transform: scale(1.05); text-shadow: 0 0 14px var(--amber), 0 0 34px var(--red-dim); }
+  }
+
+  .spin-btn{
+    position: relative;
+    background: linear-gradient(180deg, #16233a 0%, #0a1420 100%);
+    border: 1px solid rgba(247,148,29,0.45);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.4) inset,
+      0 8px 24px -8px rgba(247,148,29,0.3),
+      0 0 0 rgba(247,148,29,0);
+    transition: transform 120ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    letter-spacing: 0.22em;
+  }
+  .spin-btn:hover:not(:disabled){
+    border-color: rgba(247,148,29,0.9);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.4) inset,
+      0 10px 30px -6px rgba(230,67,42,0.45),
+      0 0 24px rgba(247,148,29,0.3);
+  }
+  .spin-btn:active:not(:disabled){ transform: scale(0.97); }
+  .spin-btn:disabled{ opacity: 0.55; cursor: not-allowed; }
+  .spin-btn .dot{
+    background: linear-gradient(135deg, var(--amber), var(--red));
+    box-shadow: 0 0 6px var(--amber);
+  }
+
+  details[open] > summary .chev{ transform: rotate(180deg); }
+  .chev{ transition: transform 200ms ease; }
+
+  textarea{
+    background: #060c14;
+    border: 1px solid var(--line);
+  }
+  textarea:focus{ outline: none; border-color: rgba(247,148,29,0.5); }
+
+  ::selection{ background: var(--amber-dim); }
+
+  .scanlines{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(247,148,29,0.02) 0px,
+      rgba(247,148,29,0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /* --- Category chips --- */
+  .cat-chip{
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(247,148,29,0.25);
+    color: #8a95a6;
+    background: rgba(247,148,29,0.04);
+    cursor: pointer;
+    transition: all 150ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  .cat-chip .cat-count{
+    font-size: 9px;
+    opacity: 0.6;
+  }
+  .cat-chip.active{
+    border-color: rgba(247,148,29,0.8);
+    color: #fff6e6;
+    background: linear-gradient(135deg, rgba(247,148,29,0.18), rgba(230,67,42,0.14));
+    box-shadow: 0 0 12px rgba(247,148,29,0.2);
+  }
+  .cat-chip:hover{ border-color: rgba(247,148,29,0.6); color: #f7d9a6; }
+
+  .cat-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(247,148,29,0.4);
+    color: #f7d9a6;
+    background: rgba(247,148,29,0.08);
+  }
+
+  .nexus-logo-node{ filter: drop-shadow(0 0 4px rgba(247,148,29,0.35)); }
+</style>
+</head>
+<body class="text-neutral-200">
+
+<!-- Overlay de registro (grupo cerrado) -->
+<div id="registro-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#040810]/95 px-4">
+  <div class="w-full max-w-sm rounded-sm border border-amber-400/25 bg-[#0b1626] px-6 py-7 flex flex-col gap-4">
+    <p class="text-[10px] tracking-[0.25em] uppercase text-amber-300/80 text-center">Nexus · Acceso de participante</p>
+    <p class="text-[11px] text-neutral-500 leading-relaxed text-center">
+      Registrate para entrar. Es un grupo cerrado: tu nombre e Instagram quedan guardados para identificarte, no se verifica identidad ni contraseña.
+    </p>
+    <input id="registro-nombre" type="text" placeholder="Nombre"
+      class="w-full rounded-sm px-3 py-2.5 text-xs bg-[#060c14] border border-white/10 text-neutral-200 focus:outline-none focus:border-amber-400/50" />
+    <input id="registro-apellido" type="text" placeholder="Apellido"
+      class="w-full rounded-sm px-3 py-2.5 text-xs bg-[#060c14] border border-white/10 text-neutral-200 focus:outline-none focus:border-amber-400/50" />
+    <input id="registro-instagram" type="text" placeholder="@usuario de Instagram"
+      class="w-full rounded-sm px-3 py-2.5 text-xs bg-[#060c14] border border-white/10 text-neutral-200 focus:outline-none focus:border-amber-400/50" />
+    <button id="registro-btn" class="spin-btn rounded-sm px-4 py-2.5 text-xs text-neutral-100 tracking-[0.15em] uppercase">Entrar</button>
+    <p id="registro-error" class="text-[10px] text-red-400 text-center h-3"></p>
+  </div>
+</div>
+
+<!-- Panel oculto de modo programador -->
+<div id="dev-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#040810]/95 px-4">
+  <div class="w-full max-w-xl max-h-[85vh] rounded-sm border border-red-400/30 bg-[#0b1626] px-6 py-6 flex flex-col gap-3">
+    <div class="flex items-center justify-between">
+      <p class="text-[10px] tracking-[0.25em] uppercase text-red-300/80">Modo programador · participantes registrados</p>
+      <button id="dev-close-btn" class="text-neutral-500 hover:text-neutral-200 text-sm leading-none">✕</button>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <input id="dev-search" type="text" placeholder="Buscar por nombre o Instagram…"
+        class="flex-1 min-w-[160px] rounded-sm px-3 py-2 text-[11px] bg-[#060c14] border border-white/10 text-neutral-200 focus:outline-none focus:border-red-400/50" />
+      <button id="dev-sort-btn" class="text-[10px] tracking-[0.1em] uppercase px-3 py-2 rounded-sm border border-white/10 text-neutral-400 hover:border-white/30 hover:text-neutral-200 transition-colors">Ordenar: recientes</button>
+      <button id="dev-export-btn" class="text-[10px] tracking-[0.1em] uppercase px-3 py-2 rounded-sm border border-amber-400/30 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10 transition-colors">Exportar CSV</button>
+      <button id="dev-export-json-btn" class="text-[10px] tracking-[0.1em] uppercase px-3 py-2 rounded-sm border border-amber-400/30 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10 transition-colors">Exportar JSON</button>
+      <button id="dev-refresh-btn" class="text-[10px] tracking-[0.1em] uppercase px-3 py-2 rounded-sm border border-white/10 text-neutral-400 hover:border-white/30 hover:text-neutral-200 transition-colors">↻ Actualizar</button>
+    </div>
+    <div id="dev-stats" class="hidden flex-wrap gap-2 text-[10px]"></div>
+    <p id="dev-count" class="text-[10px] text-neutral-600"></p>
+    <div id="dev-list" class="flex flex-col gap-1 overflow-y-auto pr-1 text-[11px] text-neutral-300"></div>
+  </div>
+</div>
+
+<!-- Toast de rango desbloqueado -->
+<div id="rank-toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-sm border border-amber-400/60 bg-[#0e1a2c] shadow-[0_0_30px_rgba(247,148,29,0.35)] text-center">
+  <p class="text-[9px] tracking-[0.25em] uppercase text-neutral-500">Nuevo rango desbloqueado</p>
+  <p id="rank-toast-name" class="display-font nexus-gradient-text text-lg uppercase mt-0.5">—</p>
+</div>
+
+<div class="min-h-screen flex flex-col items-center justify-center px-4 py-10 gap-8">
+
+  <!-- Header -->
+  <div class="flex flex-col items-center gap-3 select-none">
+    <div class="bulb-row w-56 sm:w-72" id="bulb-row-top"></div>
+
+    <svg id="nexus-logo" viewBox="0 0 200 200" class="w-16 h-16 sm:w-20 sm:h-20 mt-1 cursor-pointer" aria-hidden="true">
+      <defs>
+        <linearGradient id="nodeGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffd166"/>
+          <stop offset="100%" stop-color="#f7941d"/>
+        </linearGradient>
+        <linearGradient id="nodeGradB" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f7941d"/>
+          <stop offset="100%" stop-color="#e6432a"/>
+        </linearGradient>
+      </defs>
+      <g stroke="#0e1b2e" stroke-width="10" stroke-linecap="round">
+        <line x1="100" y1="100" x2="100" y2="45"/>
+        <line x1="100" y1="100" x2="140" y2="60"/>
+        <line x1="100" y1="100" x2="155" y2="100"/>
+        <line x1="100" y1="100" x2="140" y2="140"/>
+        <line x1="100" y1="100" x2="100" y2="155"/>
+        <line x1="100" y1="100" x2="60" y2="140"/>
+        <line x1="100" y1="100" x2="45" y2="100"/>
+        <line x1="100" y1="100" x2="60" y2="60"/>
+      </g>
+      <g class="nexus-logo-node">
+        <circle cx="100" cy="45" r="15" fill="url(#nodeGradB)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="140" cy="60" r="15" fill="url(#nodeGradB)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="155" cy="100" r="15" fill="url(#nodeGradB)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="140" cy="140" r="15" fill="url(#nodeGradB)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="100" cy="155" r="15" fill="url(#nodeGradA)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="60" cy="140" r="15" fill="url(#nodeGradA)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="45" cy="100" r="15" fill="url(#nodeGradA)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="60" cy="60" r="15" fill="url(#nodeGradA)" stroke="#0e1b2e" stroke-width="4"/>
+        <circle cx="100" cy="100" r="22" fill="url(#nodeGradB)" stroke="#0e1b2e" stroke-width="5"/>
+      </g>
+    </svg>
+
+    <h1 class="display-font nexus-gradient-text text-3xl sm:text-4xl uppercase">Nexus</h1>
+    <p class="text-[10px] sm:text-[11px] tracking-[0.2em] text-neutral-500 italic text-center max-w-xs">
+      "El arte de la política, el poder de la conexión"
+    </p>
+    <p class="text-[10px] tracking-[0.35em] text-neutral-600 uppercase mt-1">Selector de Temas · Formación Experta</p>
+
+    <div class="flex flex-wrap items-center justify-center gap-2 mt-2" id="score-hud">
+      <span class="cat-badge" id="score-badge">★ 0 PTS</span>
+      <span class="cat-badge" id="level-badge">NIVEL 1 · 0/120</span>
+      <span class="cat-badge" id="rank-badge">Iniciado</span>
+      <span class="cat-badge" id="seen-badge">0 TEMAS VISTOS</span>
+    </div>
+  </div>
+
+  <!-- Reel viewport -->
+  <div class="w-full max-w-2xl">
+    <div id="reel-viewport" class="relative w-full h-[210px] sm:h-[260px] md:h-[300px] scanlines rounded-sm">
+      <div id="reel-strip"></div>
+      <div class="center-line-frame h-[70px] sm:h-[86px] md:h-[100px]"></div>
+    </div>
+  </div>
+
+  <!-- Spin button -->
+  <button id="spin-btn" class="spin-btn rounded-sm px-10 py-4 sm:px-14 sm:py-5 text-sm sm:text-base text-neutral-100 flex items-center gap-3">
+    <span class="dot w-1.5 h-1.5 rounded-full"></span>
+    GIRAR
+    <span class="dot w-1.5 h-1.5 rounded-full"></span>
+  </button>
+
+  <!-- Categoría del tema actual -->
+  <span id="topic-cat-badge" class="cat-badge opacity-0 transition-opacity duration-300">Disciplina</span>
+
+  <!-- Enlaces para desarrollar el tema elegido -->
+  <div id="develop-links" class="flex flex-wrap gap-3 justify-center opacity-40 pointer-events-none transition-opacity duration-300">
+    <a id="link-chatgpt" href="#" target="_blank" rel="noopener noreferrer"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      Formar experto en ChatGPT
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+    </a>
+    <a id="link-claude" href="#" target="_blank" rel="noopener noreferrer"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      Formar experto en Claude
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+    </a>
+    <a id="link-gemini" href="#" target="_blank" rel="noopener noreferrer"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      Abrir en Gemini
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+    </a>
+    <a id="link-perplexity" href="#" target="_blank" rel="noopener noreferrer"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      Ampliar en Perplexity
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+    </a>
+    <button id="copy-prompt-btn" type="button"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      Copiar prompt
+      <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="1"/><path d="M5 15H4a1 1 0 01-1-1V4a1 1 0 011-1h10a1 1 0 011 1v1"/></svg>
+    </button>
+    <button id="voice-toggle-btn" type="button"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      <span id="voice-toggle-icon">🔊</span><span id="voice-toggle-label">Voz activada</span>
+    </button>
+    <button id="replay-voice-btn" type="button"
+       class="text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-white/10 text-neutral-400 hover:border-amber-400/60 hover:text-amber-300 transition-colors flex items-center gap-2">
+      ▶ Escuchar de nuevo
+    </button>
+    <button id="legal-check-btn" type="button"
+       class="hidden text-[11px] tracking-[0.15em] uppercase px-4 py-2.5 rounded-sm border border-amber-400/40 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10 transition-colors items-center gap-2">
+      ⚖ Verificar vigencia legal (IA)
+    </button>
+  </div>
+  <p id="develop-hint" class="text-[9px] tracking-[0.15em] text-neutral-700 uppercase -mt-3">Girá para habilitar los enlaces</p>
+
+  <!-- Panel de verificación legal en tiempo real -->
+  <div id="legal-check-panel" class="hidden w-full max-w-2xl -mt-2 rounded-sm border border-amber-400/25 bg-black/30 px-4 py-3.5">
+    <div class="flex items-center justify-between gap-3 mb-1.5">
+      <span class="text-[10px] tracking-[0.2em] uppercase text-amber-300/80">Vigencia legal · verificación con IA en vivo</span>
+      <button id="legal-check-close" type="button" class="text-neutral-600 hover:text-neutral-300 text-xs leading-none">✕</button>
+    </div>
+    <div id="legal-check-body" class="text-[12px] leading-relaxed text-neutral-300 whitespace-pre-wrap"></div>
+    <p class="text-[8px] tracking-[0.05em] text-neutral-700 mt-2 leading-relaxed">
+      Información general generada con búsqueda web en tiempo real. No constituye asesoramiento legal formal; verificá siempre con un profesional matriculado antes de tomar decisiones.
+    </p>
+  </div>
+  <p class="text-[8px] tracking-[0.1em] text-neutral-800 -mt-3 max-w-md text-center leading-relaxed">
+    Gemini no permite pre-cargar el prompt por URL: al hacer clic en "Abrir en Gemini" lo copiamos automáticamente a tu portapapeles y abrimos la app — solo pegalo con Ctrl/Cmd + V. El botón "Copiar prompt" hace lo mismo para pegarlo donde quieras.
+  </p>
+
+  <div class="bulb-row w-56 sm:w-72" id="bulb-row-bottom"></div>
+
+  <!-- Panel de disciplinas -->
+  <details id="panel-disciplinas" class="w-full max-w-2xl mt-2 border-t border-white/5 pt-6" open>
+    <summary class="cursor-pointer list-none flex items-center justify-between text-[11px] tracking-[0.25em] uppercase text-neutral-500 hover:text-neutral-300 transition-colors">
+      <span>Panel de Disciplinas</span>
+      <svg class="chev w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </summary>
+    <div class="mt-4 flex flex-col gap-3">
+      <p class="text-[11px] text-neutral-600 leading-relaxed">
+        El carrete se nutre de estas áreas de la consultoría. Tocá una disciplina para incluirla o excluirla del giro, una por una — con todas activas, el sorteo recorre el panel completo. También podés activarlas o desactivarlas todas de una vez con los botones de abajo.
+      </p>
+      <div id="category-panel" class="flex flex-wrap gap-2"></div>
+      <div class="flex flex-wrap gap-3 items-center mt-1">
+        <button id="cat-all-btn" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-amber-400/40 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10 transition-colors">
+          Activar todas
+        </button>
+        <button id="cat-none-btn" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-white/10 text-neutral-500 hover:border-white/30 hover:text-neutral-300 transition-colors">
+          Desactivar todas
+        </button>
+        <span id="cat-status" class="text-[10px] text-neutral-600"></span>
+      </div>
+    </div>
+  </details>
+
+  <!-- Custom topics panel -->
+  <details id="panel-personalizar" class="admin-only-panel hidden w-full max-w-2xl mt-4 border-t border-white/5 pt-6" open>
+    <summary class="cursor-pointer list-none flex items-center justify-between text-[11px] tracking-[0.25em] uppercase text-neutral-500 hover:text-neutral-300 transition-colors">
+      <span>Personalizar temas</span>
+      <svg class="chev w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </summary>
+    <div class="mt-4 flex flex-col gap-3">
+      <p class="text-[11px] text-neutral-600 leading-relaxed">
+        Escribe temas separados por comas. <span class="text-amber-300/70">Agregar</span> los suma a tu lista actual sin borrar nada; <span class="text-amber-300/70">Reemplazar todo</span> borra la lista y pone solo estos. Los temas quedan guardados en este navegador y no se repiten hasta que salieron todos.
+      </p>
+      <textarea id="custom-input" rows="5"
+        class="w-full rounded-sm px-3 py-2.5 text-xs text-neutral-300 resize-y leading-relaxed"
+        placeholder="Tema uno, Tema dos, Tema tres, ..."></textarea>
+      <div class="flex flex-wrap gap-3 items-center">
+        <button id="add-topics" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10 transition-colors">
+          Agregar
+        </button>
+        <button id="save-topics" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-amber-400/30 text-amber-300/90 hover:border-amber-400/70 hover:bg-amber-400/5 transition-colors">
+          Reemplazar todo
+        </button>
+        <button id="reset-topics" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-white/10 text-neutral-500 hover:border-white/30 hover:text-neutral-300 transition-colors">
+          Restablecer predeterminados
+        </button>
+        <span id="save-status" class="text-[10px] text-neutral-600"></span>
+      </div>
+      <p id="topic-count" class="text-[10px] text-neutral-700"></p>
+    </div>
+  </details>
+
+  <!-- Historial de temas vistos / puntaje -->
+  <details id="panel-historial" class="admin-only-panel hidden w-full max-w-2xl mt-4 border-t border-white/5 pt-6">
+    <summary class="cursor-pointer list-none flex items-center justify-between text-[11px] tracking-[0.25em] uppercase text-neutral-500 hover:text-neutral-300 transition-colors">
+      <span>Historial de temas vistos</span>
+      <svg class="chev w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </summary>
+    <div class="mt-4 flex flex-col gap-3">
+      <p class="text-[11px] text-neutral-600 leading-relaxed">
+        Cada giro suma puntos: <span class="text-amber-300/70">+15</span> si el tema es nuevo para vos, <span class="text-amber-300/70">+5</span> si ya lo habías visto. Cada 120 puntos subís de nivel. Este es el registro completo de tu recorrido.
+      </p>
+      <div id="history-list" class="flex flex-col gap-1.5 max-h-72 overflow-y-auto pr-1"></div>
+      <div class="flex flex-wrap gap-3 items-center mt-1">
+        <button id="clear-history-btn" class="text-[11px] tracking-[0.15em] uppercase px-4 py-2 rounded-sm border border-white/10 text-neutral-500 hover:border-white/30 hover:text-neutral-300 transition-colors">
+          Vaciar historial y puntaje
+        </button>
+        <span id="history-count" class="text-[10px] text-neutral-600"></span>
+      </div>
+    </div>
+  </details>
+
+  <p id="footer-stats" class="text-[9px] tracking-[0.2em] text-neutral-800 uppercase mt-2">Nexus Consultora</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------------------------------------------------
+     0. ADAPTADOR DE ENTORNO — Claude.ai artifact vs. hosting propio
+     ---------------------------------------------------------
+     Dentro de la vista previa de artifacts de Claude.ai existen dos
+     APIs especiales del navegador que NO existen en ningún otro lugar:
+       - window.storage        (almacenamiento clave/valor persistente)
+       - fetch a api.anthropic.com sin API key (proxeado por Claude.ai)
+     Si esta página se aloja fuera de Claude.ai (dominio propio, hosting
+     estático, etc.) esas dos cosas no existen, y hay que reemplazarlas
+     por llamadas a un backend propio (ver /functions/api/*.js, pensado
+     para Cloudflare Pages Functions). Este bloque detecta en qué
+     entorno está corriendo y expone una interfaz única (storageAdapter,
+     legalCheckAdapter, devAuthAdapter) para que el resto del código no
+     tenga que preocuparse por la diferencia.
+  --------------------------------------------------------- */
+  const RUNNING_IN_CLAUDE_ARTIFACT = (typeof window !== 'undefined' && !!window.storage);
+
+  // Identificador de visitante para poder distinguir "datos personales"
+  // cuando no hay backend de autenticación real (solo aplica fuera de
+  // Claude.ai, donde window.storage ya resuelve esto por vos).
+  function getVisitorId(){
+    try{
+      let id = localStorage.getItem('nexus_visitor_id');
+      if(!id){
+        id = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem('nexus_visitor_id', id);
+      }
+      return id;
+    }catch(e){ return 'v_anon'; }
+  }
+
+  const storageAdapter = {
+    async get(key, shared){
+      if(RUNNING_IN_CLAUDE_ARTIFACT) return window.storage.get(key, !!shared);
+      try{
+        const res = await fetch('/api/storage?key=' + encodeURIComponent(key) + '&shared=' + (shared ? '1' : '0'), {
+          headers: { 'x-visitor-id': getVisitorId() }
+        });
+        if(!res.ok) return null;
+        return await res.json();
+      }catch(e){ return null; }
+    },
+    async set(key, value, shared){
+      if(RUNNING_IN_CLAUDE_ARTIFACT) return window.storage.set(key, value, !!shared);
+      try{
+        const res = await fetch('/api/storage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-visitor-id': getVisitorId() },
+          body: JSON.stringify({ key: key, value: value, shared: !!shared })
+        });
+        if(!res.ok) return null;
+        return await res.json();
+      }catch(e){ return null; }
+    },
+    async delete(key, shared){
+      if(RUNNING_IN_CLAUDE_ARTIFACT) return window.storage.delete(key, !!shared);
+      try{
+        const res = await fetch('/api/storage?key=' + encodeURIComponent(key) + '&shared=' + (shared ? '1' : '0'), {
+          method: 'DELETE', headers: { 'x-visitor-id': getVisitorId() }
+        });
+        if(!res.ok) return null;
+        return await res.json();
+      }catch(e){ return null; }
+    },
+    async list(prefix, shared){
+      if(RUNNING_IN_CLAUDE_ARTIFACT) return window.storage.list(prefix, !!shared);
+      try{
+        const res = await fetch('/api/storage?prefix=' + encodeURIComponent(prefix || '') + '&shared=' + (shared ? '1' : '0') + '&list=1', {
+          headers: { 'x-visitor-id': getVisitorId() }
+        });
+        if(!res.ok) return null;
+        return await res.json();
+      }catch(e){ return null; }
+    },
+    available(){
+      return RUNNING_IN_CLAUDE_ARTIFACT || true; // fuera de Claude.ai, disponible si el backend responde
+    }
+  };
+
+  /* ---------------------------------------------------------
+     1. DATOS
+  --------------------------------------------------------- */
+  const DEFAULT_TOPICS = [
+  "Dogmática moderna del sujeto de derecho",
+  "Dinámicas de movilización en juventudes políticas subnacionales",
+  "Teoría del equilibrio general estocástico dinámico (DSGE)",
+  "Control de constitucionalidad contramayoritario",
+  "Biopolítica y necropolítica",
+  "Algoritmización de la consultoría política y prospectiva",
+  "Disociación estructural en el trauma complejo",
+  "Semiótica del poder en crisis institucionales",
+  "Teoría de juegos aplicada a coaliciones parlamentarias",
+  "Autopoiesis del sistema jurídico (Luhmann)",
+  "Paradoja de Condorcet y heresthetics",
+  "Adquisición cognitiva de lenguas extranjeras y neuroplasticidad",
+  "Modelos epidemiológicos (SIR) de desinformación",
+  "Expectativas racionales frente a la hiperinflación",
+  "Teoría de la elección pública (Public Choice)",
+  "Constructivismo estructuralista (Bourdieu)",
+  "Arquitectura de opciones y paternalismo libertario",
+  "Hermenéutica constitucional y control de convencionalidad",
+  "Psicoanálisis lacaniano y el estadio del espejo",
+  "Criptoeconomía y el trilema de la escalabilidad",
+  "Desarrollo de habilidades transversales en consultoría corporativa",
+  "Hegemonía cultural en burbujas algorítmicas",
+  "Problema del principal y el agente en la burocracia",
+  "Cliodinámica y colapso de sociedades complejas",
+  "Teoría del Actor-Red (ANT)",
+  "El problema del polizón en la acción colectiva",
+  "Neurocomunicación y activación amigdalina",
+  "Finanzas conductuales extremas y pánico de mercado",
+  "Ontología del lenguaje y actos de habla perlocutivos",
+  "Paradoja de Easterlin",
+  "Teoría de la identidad social y tribalismo cognitivo",
+  "Gobernanza policéntrica de los bienes comunes (Ostrom)",
+  "Crítica de la razón instrumental",
+  "Dialéctica del amo y el esclavo en la gig-economy",
+  "Asimetría de información y selección adversa (Akerlof)",
+  "Teoría de las ventanas rotas y su refutación empírica",
+  "Ingeniería del consentimiento (Bernays)",
+  "Modernidad líquida y fragilidad institucional",
+  "Sesgo de supervivencia en políticas públicas",
+  "Modelado de interseccionalidad cuantitativa",
+  "Espiral del silencio en entornos de alta vigilancia",
+  "Intercambio desigual y teoría de la dependencia",
+  "Fenomenología de la percepción (Merleau-Ponty)",
+  "Nodos puente en el análisis de redes sociales (SNA)",
+  "Epistemología de la economía normativa",
+  "Estructuralismo antropológico y parentesco político",
+  "Efecto Dunning-Kruger en el discurso democrático",
+  "Autosemejanza fractal en movimientos de protesta",
+  "Teoría de la utilidad marginal decreciente",
+  "Neuroplasticidad e interfaces de recompensa variable",
+  "Diseño institucional del presidencialismo bicameral",
+  "Teoría del etiquetamiento en la desviación social",
+  "Paradoja de la tolerancia de Popper",
+  "Teoría de las perspectivas (Prospect Theory)",
+  "Diseño de mecanismos (Mechanism Design)",
+  "Consenso de Washington y sus críticas heterodoxas",
+  "Estructuralismo macroeconómico latinoamericano",
+  "Economía del comportamiento en la tributación",
+  "Histéresis en el desempleo estructural",
+  "Enfermedad holandesa y desindustrialización",
+  "Teoría monetaria moderna (MMT)",
+  "Modelo de Solow-Swan y el residuo tecnológico",
+  "Trampa de la liquidez macroeconómica",
+  "Teorema de la imposibilidad de Arrow",
+  "Destrucción creativa schumpeteriana",
+  "Ventaja comparativa ricardiana en cadenas globales",
+  "Dilema de Triffin en la hegemonía del dólar",
+  "Modelos de salarios de eficiencia",
+  "Regla de Taylor en la política monetaria",
+  "Efecto expulsión (Crowding out) de la inversión privada",
+  "Paradoja del ahorro de Keynes",
+  "Curva de Laffer y elasticidad de la recaudación",
+  "Hipótesis del ingreso permanente de Friedman",
+  "Modelos de crecimiento endógeno (Romer)",
+  "Efecto Balassa-Samuelson",
+  "Ley de Goodhart en la métrica de políticas",
+  "Optimización de Pareto y fallos de mercado",
+  "Teorema de Coase y externalidades",
+  "Análisis input-output de Leontief",
+  "Capitalismo de vigilancia (Zuboff)",
+  "Acción comunicativa de Habermas",
+  "Determinismo tecnológico vs. constructivismo social",
+  "Teoría del cultivo en el consumo de medios",
+  "Efecto de tercera persona en la comunicación de masas",
+  "Agenda-setting y priming cognitivo",
+  "Panóptico digital y gubernamentalidad algorítmica",
+  "Semiótica peirceana y pragmatismo",
+  "Análisis crítico del discurso (Teun van Dijk)",
+  "Economía política de la comunicación",
+  "Difusión de innovaciones de Rogers",
+  "Ecología de los medios (McLuhan)",
+  "Teoría de los usos y gratificaciones",
+  "Comunicación asimétrica en negociaciones de rehenes",
+  "Cibernética de segundo orden",
+  "Entropía y redundancia en la teoría de la información",
+  "Disonancia cognitiva y racionalización post-decisión",
+  "Teoría de la gestión del terror (TMT)",
+  "Heurística de disponibilidad y anclaje",
+  "Efecto halo en la percepción de liderazgo",
+  "Indefensión aprendida (Seligman)",
+  "Condicionamiento operante en el diseño de políticas",
+  "Memoria semántica vs. memoria episódica",
+  "Sesgo de confirmación y razonamiento motivado",
+  "Psicopatología del poder y el síndrome de hybris",
+  "Teoría del apego en la adultez política",
+  "Psicología de las masas (Le Bon/Freud)",
+  "Modelo de los cinco grandes (Big Five) en la ideología",
+  "Tríada oscura de la personalidad y liderazgo tóxico",
+  "Ilusión de control en mercados financieros",
+  "Ceguera inatencional en la toma de decisiones",
+  "Efecto espectador (Bystander effect) institucional",
+  "Obediencia a la autoridad (Experimento de Milgram)",
+  "Desindividualización en multitudes urbanas",
+  "Teoría del intercambio social",
+  "Psicología evolutiva de la formación de coaliciones",
+  "Transferencia y contratransferencia en la consultoría",
+  "Interaccionismo simbólico (Goffman)",
+  "Sociología del conocimiento (Mannheim)",
+  "Anomia y estructura social (Merton)",
+  "Teoría de la estructuración (Giddens)",
+  "Racionalización y jaula de hierro (Weber)",
+  "Solidaridad mecánica vs. orgánica (Durkheim)",
+  "Sociología del cuerpo y la performatividad (Butler)",
+  "Marxismo analítico y microfundamentos",
+  "Sociología urbana y gentrificación",
+  "Capital social y declive cívico (Putnam)",
+  "Etnometodología de Garfinkel",
+  "Sociología del riesgo (Ulrich Beck)",
+  "Macdonalización de la sociedad (Ritzer)",
+  "Sociología de las emociones (Hochschild)",
+  "Teoría del conflicto (Dahrendorf)",
+  "Sociología de la religión y secularización",
+  "Teoría del sistema-mundo (Wallerstein)",
+  "Estudios subalternos y poscolonialismo",
+  "Sociología del arte y del gusto",
+  "Sistemas electorales y fórmula D'Hondt",
+  "Gerrymanderings y redistritación partidista",
+  "Sistemas de partidos (Sartori)",
+  "Transiciones a la democracia (O'Donnell/Schmitter)",
+  "Veto players en la estabilidad política (Tsebelis)",
+  "Calidad democrática y rendición de cuentas (Accountability)",
+  "Clientelismo y patronazgo político",
+  "Populismo como lógica política (Laclau)",
+  "Federalismo fiscal y descentralización",
+  "Corporativismo y pluralismo interestelar",
+  "Institucionalismo de elección racional",
+  "Teoría de la paz democrática",
+  "Realismo ofensivo en relaciones internacionales",
+  "Constructivismo en política exterior",
+  "Justicia transicional y comisiones de la verdad",
+  "Constitucionalismo abusivo",
+  "Erosión democrática y autocratización",
+  "Cleavages sociales y alineamiento electoral (Rokkan)",
+  "Financiamiento de campañas y captura del Estado",
+  "Diseño de burocracias weberianas",
+  "Modelos de votación espacial (Teorema del votante mediano)",
+  "Política contenciosa (Tilly/Tarrow)",
+  "Análisis de políticas públicas (Policy cycle)",
+  "Neoinstitucionalismo histórico",
+  "Economía política internacional de los regímenes comerciales",
+  "Pluralismo jurídico y derecho consuetudinario",
+  "Realismo jurídico estadounidense",
+  "Positivismo incluyente vs. excluyente",
+  "Teoría pura del derecho (Kelsen)",
+  "Argumentación jurídica y derrotabilidad (Defeasibility)",
+  "Principio de proporcionalidad (Robert Alexy)",
+  "Análisis económico del derecho (Law and Economics)",
+  "Feminismo jurídico y epistemología del punto de vista",
+  "Derecho penal del enemigo (Jakobs)",
+  "Garantismo penal (Ferrajoli)",
+  "Neuroderecho (Neurolaw) y libre albedrío",
+  "Gobernanza de la inteligencia artificial",
+  "Justicia restaurativa vs. retributiva",
+  "Derechos de la naturaleza y biocentrismo",
+  "Extraterritorialidad de las leyes tributarias",
+  "Propiedad intelectual y acceso a medicamentos esenciales",
+  "Arbitraje internacional de inversiones (CIADI)",
+  "Constitucionalismo global",
+  "Sociología del derecho y culturas jurídicas",
+  "Dogmática penal y teoría de la imputación objetiva",
+  "Epistemología de la prueba judicial",
+  "Ciberseguridad y soberanía digital",
+  "Diplomacia coercitiva y sanciones económicas",
+  "Guerra híbrida y zonas grises",
+  "Inteligencia de fuentes abiertas (OSINT) en política",
+  "Asimetría militar y guerra de guerrillas",
+  "Geopolítica de la transición energética",
+  "Cadenas de suministro críticas y reshoring",
+  "Transhumanismo y bioética política",
+  "Singularidad tecnológica y gobernanza global",
+  "Filosofía de la mente y la inteligencia artificial general",
+  "Modelos de lenguaje de gran escala (LLM) y epistemología sintética",
+  "Complejidad computacional en el cálculo económico",
+  "Criptografía asimétrica y privacidad política",
+  "Economía del comportamiento en la fijación de precios",
+  "Intervencionismo humanitario y responsabilidad de proteger (R2P)",
+  "Teoría del reconocimiento (Honneth)",
+  "Ecología política y metabolismo social",
+  "Antropoceno y las políticas del cambio climático",
+  "Utopías reales y rediseño institucional alternativo"
+];
+
+  const STORAGE_KEY = 'nexus_temas_v2';
+  const CATS_STORAGE_KEY = 'nexus_categorias_activas_v1';
+
+  /* ---------------------------------------------------------
+     1b. DISCIPLINAS — clasificación automática por palabra clave
+  --------------------------------------------------------- */
+  const CATEGORY_META = [
+    { key: 'politica',                  label: 'Política' },
+    { key: 'derecho',                   label: 'Derecho Corporativo & Regulatorio' },
+    { key: 'contratos',                 label: 'Contratos & Arbitraje' },
+    { key: 'psicologia',                label: 'Psicología' },
+    { key: 'psicologia-oscura',         label: 'Psicología Oscura' },
+    { key: 'persuasion',                label: 'Persuasión & Comunicación' },
+    { key: 'tecnopolitica',             label: 'Tecnopolítica & IA' },
+    { key: 'tokenizacion',              label: 'Tokenización & Cripto' },
+    { key: 'economia',                  label: 'Economía' },
+    { key: 'sociologia',                label: 'Sociología' },
+    { key: 'relaciones-internacionales',label: 'Relaciones Internacionales' },
+    { key: 'filosofia',                 label: 'Filosofía & Epistemología' },
+    { key: 'derecho-tributario',        label: 'Derecho Tributario Argentino' },
+    { key: 'historia-politica',         label: 'Historia Política' },
+    { key: 'historia-mundial',          label: 'Historia Mundial' },
+    { key: 'historia-contemporanea',    label: 'Historia Contemporánea' },
+    { key: 'legal-tech',                label: 'Law & Legal Tech' },
+    { key: 'propiedad-intelectual',     label: 'Derecho de Propiedad Intelectual' },
+    { key: 'inversiones-argentina',     label: 'Inversiones en Argentina' },
+    { key: 'inversiones',               label: 'Inversiones & Mercados de Capitales' },
+    { key: 'derecho-empresarial',       label: 'Derecho Empresarial & Societario' },
+    { key: 'general',                   label: 'General / Interdisciplinario' }
+  ];
+  const CATEGORY_LABEL = Object.fromEntries(CATEGORY_META.map(c => [c.key, c.label]));
+
+  /* Disciplinas cuyo contenido es normativo/regulatorio: para estos temas
+     se habilita el botón "Verificar vigencia legal (IA)", que consulta al
+     modelo con búsqueda web en vivo para chequear el estado actual de la
+     norma o práctica en cuestión. */
+  const LEGAL_REALTIME_CATEGORIES = new Set([
+    'derecho', 'derecho-empresarial', 'derecho-tributario', 'contratos',
+    'propiedad-intelectual', 'legal-tech', 'inversiones-argentina', 'inversiones'
+  ]);
+
+  const CATEGORY_RULES = [
+    { key: 'inversiones', kws: ['mercado de capitales', 'oferta pública de valores', 'oferta pública de adquisición', 'fondo común de inversión', 'fondo de inversión', 'private equity', 'venture capital', 'capital de riesgo', 'fideicomiso financiero', 'obligaciones negociables', 'bono soberano', 'isds', 'arbitraje de inversión', 'fondo soberano', 'family office', 'ronda de inversión', 'nota convertible', 'crowdfunding', 'due diligence financiero'] },
+    { key: 'derecho-empresarial', kws: ['derecho societario', 'sociedad anónima', 'sociedad de responsabilidad limitada', 'ley de sociedades', 'estatuto social', 'asamblea de accionistas', 'escisión societaria', 'reorganización societaria', 'fusión societaria', 'joint venture', 'concurso preventivo', 'quiebra empresarial', 'reestructuración empresarial', 'sociedad por acciones simplificada', 'holding societario', 'due diligence legal', 'pacto de socios'] },
+    { key: 'tokenizacion', kws: ['criptoeconomía', 'trilema de la escalabilidad', 'criptografía asimétrica'] },
+    { key: 'tecnopolitica', kws: ['algoritmización', 'algorítmic', 'inteligencia artificial', 'llm', 'modelos de lenguaje', 'ciberseguridad', 'panóptico digital', 'capitalismo de vigilancia', 'determinismo tecnológico', 'transhumanismo', 'singularidad tecnológica', 'complejidad computacional', 'gobernanza de la inteligencia artificial', 'neuroderecho'] },
+    { key: 'psicologia-oscura', kws: ['tríada oscura', 'hybris', 'gestión del terror', 'obediencia a la autoridad'] },
+    { key: 'persuasion', kws: ['ingeniería del consentimiento', 'bernays', 'semiótica del poder', 'agenda-setting', 'priming', 'espiral del silencio', 'tercera persona', 'cultivo en el consumo', 'usos y gratificaciones', 'negociaciones de rehenes', 'neurocomunicación', 'disonancia cognitiva'] },
+    { key: 'psicologia', kws: ['psicoanálisis', 'psicología', 'trauma', 'apego', 'amigdal', 'condicionamiento', 'indefensión aprendida', 'milgram', 'desindividualización', 'espectador', 'heurística', 'sesgo de', 'big five', 'fenomenología de la percepción', 'memoria semántica', 'ilusión de control', 'ceguera inatencional'] },
+    { key: 'contratos', kws: ['arbitraje internacional', 'ciadi'] },
+    { key: 'legal-tech', kws: ['legal tech', 'legaltech', 'lawtech', 'derecho y tecnología', 'tecnología jurídica', 'automatización jurídica', 'justicia predictiva', 'legal design', 'inteligencia artificial jurídica', 'justicia digital', 'firma electrónica', 'expediente digital'] },
+    { key: 'propiedad-intelectual', kws: ['propiedad intelectual', 'propiedad industrial', 'patente', 'marca registrada', 'derecho de autor', 'derechos de autor', 'copyright', 'know-how', 'secreto industrial', 'diseño industrial', 'licenciamiento de tecnología', 'indicación geográfica', 'obtenciones vegetales'] },
+    { key: 'inversiones-argentina', kws: ['inversión extranjera', 'inversiones en argentina', 'ley de inversiones', 'promoción de inversiones', 'régimen de incentivo', 'blanqueo de capitales', 'repatriación de capitales', 'tratado bilateral de inversión', 'cepo cambiario', 'dólar mep', 'riesgo país', 'radicación de capitales', 'rigi'] },
+    { key: 'derecho-tributario', kws: ['tributari', 'impositiv', 'fiscal', 'impuesto', 'doble imposición', 'precios de transferencia', 'contribuyente', 'recaudación'] },
+    { key: 'derecho', kws: ['derecho', 'jurídic', 'penal', 'constitucional', 'garantismo', 'kelsen', 'jakobs', 'ferrajoli', 'alexy', 'positivismo', 'derrotabilidad'] },
+    { key: 'historia-contemporanea', kws: ['guerra mundial', 'revolución rusa', 'guerra fría', 'holocausto', 'primavera árabe', 'muro de berlín', 'yugoslavia', '11 de septiembre', 'gran depresión', 'fascismo', 'nazismo', 'terrorismo de estado', 'yalta'] },
+    { key: 'historia-mundial', kws: ['imperio', 'colonial', 'ruta de la seda', 'feudalismo', 'califato', 'mesoamérica', 'andes', 'westfaliano', 'gran divergencia', 'trata esclavista', 'gunpowder'] },
+    { key: 'historia-politica', kws: ['estado-nación', 'absolutismo', 'caudillismo', 'bonapartismo', 'totalitarismo', 'sufragio universal', 'estado de bienestar', 'republicanismo clásico', 'ciudadanías censitarias'] },
+    { key: 'relaciones-internacionales', kws: ['relaciones internacionales', 'realismo ofensivo', 'paz democrática', 'política exterior', 'justicia transicional', 'guerra híbrida', 'asimetría militar', 'cadenas de suministro', 'reshoring', 'responsabilidad de proteger', 'intervencionismo humanitario', 'economía política internacional', 'diplomacia coercitiva', 'sanciones económicas', 'osint', 'geopolítica'] },
+    { key: 'politica', kws: ['política', 'electoral', 'democracia', 'populismo', 'gerrymandering', 'partidos', 'parlamentari', 'presidencialismo', 'clientelismo', 'federalismo', 'veto players', 'accountability', 'movilización', 'coaliciones', 'corporativismo', 'institucionalismo', 'transiciones a la democracia', 'cleavages', 'financiamiento de campañas', 'burocracias weberianas', 'biopolítica', 'necropolítica'] },
+    { key: 'economia', kws: ['económic', 'monetari', 'inflación', 'dsge', 'fiscal', 'keynes', 'friedman', 'solow', 'schumpeter', 'ricardian', 'triffin', 'laffer', 'crowding out', 'salarios de eficiencia', 'input-output', 'pareto', 'coase', 'akerlof', 'balassa-samuelson', 'goodhart', 'consenso de washington', 'macroeconómico', 'histéresis', 'enfermedad holandesa', 'trampa de la liquidez', 'romer', 'utilidad marginal', 'elección pública', 'easterlin', 'finanzas conductuales'] },
+    { key: 'sociologia', kws: ['sociología', 'durkheim', 'weber', 'bourdieu', 'goffman', 'merton', 'giddens', 'ritzer', 'hochschild', 'dahrendorf', 'wallerstein', 'poscolonial', 'capital social', 'putnam', 'garfinkel', 'anomia', 'gentrificación', 'solidaridad mecánica'] },
+    { key: 'filosofia', kws: ['fenomenología', 'dialéctica', 'crítica de la razón', 'ontología del lenguaje', 'epistemología', 'honneth', 'utopías reales', 'ecología política', 'antropoceno'] }
+  ];
+
+  function categorize(text){
+    const lower = text.toLowerCase();
+    for(const rule of CATEGORY_RULES){
+      if(rule.kws.some(k => lower.includes(k))) return rule.key;
+    }
+    return 'general';
+  }
+
+  function toTopicObjects(list){
+    return list.map(t => (typeof t === 'string') ? { text: t, category: categorize(t) } : t);
+  }
+
+  /* ---------------------------------------------------------
+     1c. EXPANSIÓN — generador combinatorio de ~500 temas por disciplina
+     Cada disciplina tiene un banco de conceptos propios que se cruza con
+     un banco compartido de contextos aplicados, usando varias plantillas.
+     Un Set global garantiza que ningún tema se repita, ni entre sí ni
+     con los 200 temas originales.
+  --------------------------------------------------------- */
+  const CONTEXT_POOL = [
+    'la consultoría política contemporánea', 'el diseño institucional pospandemia',
+    'los mercados emergentes', 'la gobernanza corporativa multinacional',
+    'contextos de alta polarización social', 'la era de la inteligencia artificial generativa',
+    'las democracias híbridas', 'la economía de plataformas',
+    'la transición energética global', 'las campañas electorales digitales',
+    'la negociación diplomática de alto nivel', 'los sistemas de compliance corporativo',
+    'la comunicación de crisis institucional', 'el litigio estratégico transnacional',
+    'las startups tecnológicas en expansión', 'los fondos soberanos de inversión',
+    'la regulación de plataformas digitales', 'el activismo judicial contemporáneo',
+    'las cadenas de valor globalizadas', 'los procesos de integración regional',
+    'la reforma del Estado latinoamericano', 'el ecosistema de medios digitales',
+    'la gestión de reputación corporativa', 'los mercados financieros descentralizados',
+    'las negociaciones colectivas laborales', 'la política exterior de potencias medias',
+    'los movimientos sociales en red', 'el sector energético en transición',
+    'la privacidad de datos a escala masiva', 'los organismos multilaterales de crédito',
+    'las fusiones y adquisiciones transfronterizas', 'la justicia climática',
+    'el lobby empresarial', 'la gobernanza de plataformas de inteligencia artificial',
+    'las democracias de baja intensidad', 'los sistemas de partidos fragmentados',
+    'la economía del conocimiento', 'las redes de influencia digital',
+    'el arbitraje comercial internacional', 'los think tanks de política pública'
+  ];
+
+  const CONCEPT_POOLS = {
+    'politica': ['El realineamiento de las coaliciones parlamentarias', 'La captura regulatoria de agencias públicas', 'El ciclo de vida de los partidos-movimiento', 'La polarización afectiva del electorado', 'El diseño de sistemas de primarias abiertas', 'La legitimidad de origen frente a la de ejercicio', 'El voto económico retrospectivo', 'La fragmentación del sistema de medios políticos', 'El realismo institucional en la reforma del Estado', 'La rendición de cuentas horizontal entre poderes', 'El clientelismo programático', 'La tecnocracia como legitimación del poder ejecutivo', 'El ciclo electoral y la política fiscal', 'La coordinación estratégica entre oposiciones', 'El presidencialismo de coalición', 'La deliberación pública en democracias digitales', 'El control político de los organismos autónomos', 'La geometría variable de las alianzas legislativas'],
+    'derecho': ['La responsabilidad limitada y el velo societario', 'El deber fiduciario de los administradores', 'La gobernanza corporativa y los códigos de buen gobierno', 'El control de fusiones y la defensa de la competencia', 'La responsabilidad penal de las personas jurídicas', 'El cumplimiento normativo (compliance) como función estratégica', 'La debida diligencia en operaciones societarias', 'La protección de accionistas minoritarios', 'El régimen de conflictos de interés en directorios', 'La insolvencia transfronteriza de grupos empresariales', 'La cláusula de arbitraje en estatutos sociales', 'El levantamiento del velo societario', 'La responsabilidad social corporativa como norma jurídica', 'El régimen sancionatorio del derecho de la competencia', 'La due diligence regulatoria en fusiones', 'El gobierno corporativo en empresas familiares'],
+    'contratos': ['La cláusula rebus sic stantibus', 'El pacta sunt servanda frente a la imprevisión', 'Las cláusulas de fuerza mayor en contratos internacionales', 'El arbitraje comercial ad hoc frente al institucional', 'La cláusula compromisoria y su autonomía', 'Los contratos inteligentes (smart contracts) y su ejecución', 'La responsabilidad precontractual (culpa in contrahendo)', 'Las garantías e indemnidades (reps & warranties)', 'El derecho aplicable en contratos multijurisdiccionales', 'La cláusula de resolución de disputas escalonada', 'Los acuerdos de accionistas y sus pactos de bloqueo', 'La ejecución de laudos arbitrales extranjeros', 'Las cláusulas MAC (material adverse change)', 'El principio de buena fe contractual', 'Los contratos de licencia de propiedad intelectual', 'La cláusula de no competencia poscontractual'],
+    'psicologia': ['El sesgo del optimismo en la toma de decisiones', 'La regulación emocional bajo presión institucional', 'El agotamiento decisional (decision fatigue)', 'La teoría de la autodeterminación en el liderazgo', 'El efecto de encuadre en la percepción de riesgo', 'La resiliencia psicológica ante la incertidumbre política', 'El pensamiento de grupo (groupthink) en gabinetes', 'La sobrecarga cognitiva en la comunicación de crisis', 'La empatía cognitiva frente a la empatía afectiva', 'El sesgo retrospectivo en la evaluación de políticas', 'La teoría del flujo (flow) aplicada al desempeño', 'La disonancia de rol en cargos públicos', 'El efecto Pigmalión en equipos de trabajo', 'La fatiga de la compasión en profesiones de ayuda', 'El locus de control interno en el liderazgo', 'La regulación del estrés crónico organizacional'],
+    'psicologia-oscura': ['El gaslighting como táctica de control narrativo', 'El love bombing en la captación de seguidores', 'La manipulación por culpa (guilt-tripping) en negociaciones', 'El maquiavelismo como rasgo de liderazgo estratégico', 'La explotación de la reciprocidad para obtener concesiones', 'El uso del miedo como palanca de obediencia', 'La triangulación relacional en estructuras de poder', 'El aislamiento progresivo como técnica de control grupal', 'La proyección psicológica en discursos de campaña', 'El narcisismo maligno y la conducción autoritaria', 'La coacción digital como arma política', 'El efecto de anclaje manipulado en negociaciones', 'La psicopatía subclínica en entornos corporativos', 'El condicionamiento intermitente en dinámicas de lealtad'],
+    'persuasion': ['El principio de escasez en la comunicación política', 'La prueba social como palanca persuasiva', 'La autoridad percibida y su transferencia de credibilidad', 'El compromiso y la coherencia en campañas sostenidas', 'La reciprocidad estratégica en relaciones públicas', 'El storytelling como arquitectura persuasiva', 'El framing moral en el discurso político', 'La retórica clásica (ethos, pathos, logos) aplicada', 'La repetición y la ilusión de verdad', 'El efecto de la fuente única frente a fuentes múltiples', 'La persuasión narrativa frente a la persuasión argumentativa', 'El nudge conductual en políticas públicas', 'La microsegmentación de audiencias persuasivas', 'El uso de testimonios en la legitimación pública', 'La disonancia inducida como herramienta de cambio de actitud', 'El lenguaje corporal y la persuasión no verbal'],
+    'tecnopolitica': ['La gobernanza algorítmica de plataformas sociales', 'El microtargeting político basado en datos masivos', 'La desinformación sintética generada por IA', 'Los sistemas de puntuación social y su regulación', 'La soberanía de datos frente a las grandes tecnológicas', 'El voto electrónico y su auditabilidad', 'La regulación de deepfakes en campañas electorales', 'La automatización del trabajo legislativo', 'Los algoritmos de recomendación y la polarización', 'La gobernanza de modelos de lenguaje de frontera', 'La ciberdiplomacia y los ataques híbridos', 'La vigilancia predictiva y el debido proceso', 'Los gemelos digitales en la planificación urbana', 'La brecha algorítmica entre Estado y ciudadanía', 'La regulación de la inteligencia artificial generativa', 'El activismo de datos abiertos (open data)'],
+    'tokenizacion': ['La tokenización de activos reales (RWA)', 'Los contratos inteligentes en la gobernanza de DAOs', 'El staking como mecanismo de participación en redes', 'La tokenómica y el diseño de incentivos', 'Las stablecoins y su impacto en la política monetaria', 'La identidad descentralizada (DID) y la ciudadanía digital', 'Los NFT como instrumento de propiedad intelectual', 'La gobernanza on-chain de organizaciones autónomas', 'El staking delegado y la concentración de poder', 'Los oráculos y la confiabilidad de datos externos', 'La regulación de exchanges centralizados y descentralizados', 'El lavado de activos en criptomercados', 'La interoperabilidad entre cadenas de bloques', 'El voto cuadrático en gobernanza descentralizada', 'La tokenización de la deuda soberana', 'Las finanzas descentralizadas (DeFi) y el riesgo sistémico'],
+    'economia': ['La política industrial selectiva en economías emergentes', 'El riesgo soberano y las primas de default', 'La dolarización parcial como ancla nominal', 'Los ciclos de commodities y su impacto fiscal', 'La informalidad laboral estructural', 'El multiplicador fiscal en contextos de baja credibilidad', 'La captura regulatoria en sectores concentrados', 'La financiarización de la economía real', 'Los subsidios cruzados en servicios públicos', 'La productividad total de los factores en rezago', 'El arbitraje regulatorio internacional', 'La economía política de las reformas estructurales', 'El costo fiscal de la evasión tributaria', 'Los términos de intercambio y su volatilidad', 'La sostenibilidad de la deuda pública a largo plazo', 'El impuesto óptimo bajo movilidad de capitales'],
+    'sociologia': ['El habitus de las élites político-empresariales', 'La desafiliación institucional de las nuevas generaciones', 'El capital simbólico en la legitimación del poder', 'La estratificación social y el acceso a la justicia', 'La movilidad social interrumpida en economías duales', 'El tejido asociativo y la resiliencia comunitaria', 'La segregación residencial y la polarización política', 'La sociología de las élites transnacionales', 'El estigma social en políticas de bienestar', 'La reproducción intergeneracional de la desigualdad', 'La confianza institucional en sociedades fragmentadas', 'El individualismo reflexivo en la esfera pública', 'La sociología de las profesiones reguladas', 'El consumo conspicuo como señalización de estatus', 'La solidaridad de riesgo en sociedades aseguradoras', 'El cosmopolitismo desde abajo en las migraciones'],
+    'relaciones-internacionales': ['El equilibrio de poder regional en transición', 'La diplomacia de los formatos minilaterales', 'El uso estratégico de las sanciones selectivas', 'La competencia por minerales críticos', 'La diplomacia pública y el poder blando', 'Los corredores logísticos como instrumento geopolítico', 'La rivalidad tecnológica entre grandes potencias', 'La seguridad alimentaria como variable geopolítica', 'Las alianzas asimétricas y sus costos de agencia', 'La diplomacia climática multilateral', 'El realismo defensivo frente al ofensivo', 'La gobernanza global de bienes públicos comunes', 'La disuasión extendida en contextos de multipolaridad', 'La diplomacia de los recursos hídricos compartidos', 'El no alineamiento estratégico contemporáneo', 'La securitización de las cadenas de suministro'],
+    'filosofia': ['La justicia como equidad frente al mérito', 'El contractualismo renovado en sociedades plurales', 'La ética del cuidado en la esfera pública', 'El pluralismo de valores y la decisión política', 'La filosofía política del reconocimiento recíproco', 'La autonomía relacional frente al individualismo liberal', 'La responsabilidad colectiva en catástrofes sistémicas', 'El republicanismo cívico y la no dominación', 'La filosofía de la tecnología y el poder', 'La hermenéutica del conflicto social', 'La ética de la responsabilidad weberiana', 'El pragmatismo político como método deliberativo', 'La filosofía moral del riesgo colectivo', 'La crítica normativa de la meritocracia', 'La filosofía de la historia y el progreso', 'El escepticismo epistémico en la esfera pública'],
+    'general': ['La interdisciplinariedad en el diseño de políticas públicas', 'La gestión estratégica de la incertidumbre', 'El liderazgo adaptativo en entornos volátiles', 'La construcción de escenarios prospectivos', 'El pensamiento sistémico aplicado a la consultoría', 'La gobernanza de riesgos emergentes', 'La ética aplicada en la toma de decisiones', 'La comunicación estratégica multisectorial', 'El diseño de políticas basadas en evidencia', 'La innovación institucional disruptiva', 'La gestión del cambio organizacional profundo', 'La construcción de consensos multiactor', 'El análisis de stakeholders en proyectos complejos', 'La sostenibilidad como criterio transversal de decisión'],
+    'derecho-tributario': ['El principio de reserva de ley en materia tributaria', "La doctrina de la realidad económica (art. 2 de la Ley 11.683)", "Los precios de transferencia y el principio arm's length", 'La responsabilidad solidaria de administradores societarios ante el Fisco', 'El instituto de la repetición tributaria', 'La prescripción de la acción fiscal y sus causales de suspensión', 'El ajuste por inflación impositivo en el Impuesto a las Ganancias', 'La teoría del abuso de las formas jurídicas en materia fiscal', 'Los convenios para evitar la doble imposición internacional (CDI)', 'El instituto del establecimiento permanente en el derecho tributario internacional', 'La aplicación del principio de capacidad contributiva', 'El Convenio Multilateral y la distribución interjurisdiccional de base imponible', 'La figura del sustituto tributario en retenciones y percepciones', 'El régimen penal tributario y la extinción de la acción por pago', 'La cláusula antielusiva general (GAAR) en el sistema argentino', 'La determinación de oficio sobre base presunta', 'El principio de no confiscatoriedad tributaria', 'La deducibilidad de intereses y las reglas de subcapitalización (thin capitalization)'],
+    'historia-politica': ['La formación del Estado-nación moderno', 'El absolutismo monárquico y la teoría del derecho divino', 'El parlamentarismo británico y la Revolución Gloriosa', 'El republicanismo clásico y su recepción en las revoluciones atlánticas', 'La construcción de las ciudadanías censitarias del siglo XIX', 'El caudillismo y la formación de los Estados latinoamericanos', 'El bonapartismo como forma de dominación política', 'La cuestión social y el surgimiento de los partidos obreros', 'El corporativismo político de entreguerras', 'El totalitarismo como categoría analítica (Arendt)', 'Las democracias de masas y el sufragio universal', 'La bipolaridad ideológica de la Guerra Fría', 'Los procesos de descolonización y el no alineamiento', 'Las transiciones democráticas del tercer tercio del siglo XX', 'El populismo clásico latinoamericano', 'La crisis de representación de los partidos tradicionales', 'El Estado de bienestar keynesiano y su crisis', 'La reconfiguración del orden político tras 1989'],
+    'historia-mundial': ['La formación de los imperios agrarios euroasiáticos', 'El sistema tributario del Imperio romano tardío', 'La ruta de la seda y los intercambios afroeuroasiáticos', 'El feudalismo europeo y sus variantes regionales', 'La expansión del islam y el califato abasí', 'Los imperios gunpowder de la Edad Moderna (otomano, safávida, mogol)', 'El sistema colonial atlántico y la economía de plantación', 'La Revolución Industrial y la Gran Divergencia', 'El imperialismo europeo del siglo XIX y el reparto de África', 'El sistema de Estados westfaliano', 'Las guerras mundiales como ruptura del orden internacional', 'La descolonización de Asia y África', 'El sistema de Bretton Woods', 'La Guerra Fría como orden bipolar global', 'La globalización económica de fines del siglo XX', 'Los imperios centralizados de Mesoamérica y los Andes', 'El comercio triangular atlántico y la trata esclavista', 'La Revolución Francesa y su proyección global'],
+    'historia-contemporanea': ['La Primera Guerra Mundial y el colapso de los imperios centrales', 'La Revolución Rusa de 1917', 'La Gran Depresión de 1929', 'El ascenso del fascismo y el nazismo', 'La Segunda Guerra Mundial y el Holocausto', 'El orden de Yalta y la división de Europa', 'La descolonización afroasiática de posguerra', 'La Revolución Cubana y la Guerra Fría en América Latina', 'Mayo del 68 y las nuevas izquierdas', 'Las dictaduras del Cono Sur y el terrorismo de Estado', 'La crisis del petróleo de 1973 y el fin de Bretton Woods', 'La caída del Muro de Berlín y el fin de la Guerra Fría', 'La desintegración de Yugoslavia', 'El 11 de septiembre de 2001 y la guerra contra el terrorismo', 'La primavera árabe', 'La crisis financiera global de 2008', 'El ascenso de China como potencia global', 'El resurgimiento de los nacionalismos en el siglo XXI'],
+    'legal-tech': ['La automatización de contratos mediante inteligencia artificial generativa', 'Los sistemas de justicia predictiva y sus límites éticos', 'El legal design aplicado a la simplificación normativa', 'La responsabilidad profesional del abogado frente a herramientas de IA', 'La firma electrónica y el expediente judicial digital', 'Los chatbots jurídicos y el acceso a la justicia', 'La revisión documental asistida (e-discovery) en litigios complejos', 'La gobernanza algorítmica de los estudios jurídicos', 'Los contratos inteligentes y su validez frente al derecho tradicional', 'La protección de datos personales en plataformas legaltech', 'La due diligence automatizada mediante procesamiento de lenguaje natural', 'El notariado digital y la desmaterialización de actos jurídicos', 'La ética algorítmica en la toma de decisiones judiciales asistidas', 'Los sistemas de resolución de disputas en línea (ODR)', 'La trazabilidad blockchain aplicada a la cadena de custodia', 'La regulación de la abogacía frente a la práctica no autorizada por IA'],
+    'propiedad-intelectual': ['El registro y la protección internacional de marcas', 'La patentabilidad de invenciones biotecnológicas', 'La gestión de derechos de autor en entornos digitales', 'El know-how y el secreto industrial como activos estratégicos', 'La licencia de uso de marca y sus cláusulas de calidad', 'La piratería digital y las medidas de observancia', 'La protección de software mediante derecho de autor frente a patentes', 'Las indicaciones geográficas y las denominaciones de origen', 'El agotamiento del derecho de marca en el comercio paralelo', 'La titularidad de obras creadas por sistemas de inteligencia artificial', 'La transferencia internacional de tecnología y sus regalías', 'El diseño industrial como activo de propiedad intelectual', 'La observancia aduanera frente a mercadería falsificada', 'Los acuerdos de confidencialidad en procesos de innovación', 'La valuación de activos intangibles en operaciones de M&A', 'El régimen de obtenciones vegetales y la biotecnología agrícola'],
+    'inversiones-argentina': ['El régimen de promoción de inversiones y sus incentivos fiscales', 'La estabilidad jurídica como condición para la inversión extranjera directa', 'Los tratados bilaterales de inversión y el arbitraje CIADI', 'El riesgo cambiario y el acceso al mercado de cambios', 'La repatriación de utilidades y capitales al exterior', 'El régimen de incentivo para grandes inversiones (RIGI)', 'La seguridad jurídica frente a cambios regulatorios abruptos', 'El financiamiento de proyectos mediante fideicomisos de inversión', 'La atracción de capitales en sectores de energía y minería', 'El riesgo país y su impacto en el costo de financiamiento', 'La ley de inversiones extranjeras y sus antecedentes normativos', 'El tratamiento fiscal de dividendos remitidos al exterior', 'La protección contra la expropiación indirecta', 'El régimen de blanqueo de capitales y sus efectos en la inversión', 'La estructuración de vehículos de inversión extranjera en Argentina', 'El equilibrio entre control de capitales y previsibilidad para el inversor'],
+    'inversiones': ['La estructuración jurídica de rondas de inversión en startups (venture capital)', 'El capital privado (private equity) y las estrategias de salida (exit)', 'La oferta pública de valores y el régimen del mercado de capitales', 'Los fondos comunes de inversión y su marco regulatorio', 'El fideicomiso financiero como vehículo estructurado de inversión', 'Las obligaciones negociables como instrumento de financiamiento corporativo', 'La protección internacional de inversiones y los tratados bilaterales', 'El arbitraje de inversión ante el CIADI y otros foros', 'Los fondos soberanos y su rol en la asignación global de capital', 'El due diligence financiero en operaciones de inversión', 'Los mecanismos de resolución de controversias inversor-Estado (ISDS)', 'La valuación de startups y las cláusulas antidilución', 'El financiamiento mediante notas convertibles (SAFE) en etapas tempranas', 'La gestión de carteras y la diversificación del riesgo de inversión', 'El impacto del régimen cambiario en la repatriación de utilidades', 'Los family offices y la gestión patrimonial de grandes fortunas', 'La sindicación de inversores (syndicates) en rondas tempranas', 'La regulación del crowdfunding y la inversión colectiva'],
+    'derecho-empresarial': ['La constitución de sociedades y el contrato social como norma fundacional', 'Los tipos societarios y el alcance de la responsabilidad de los socios', 'El régimen de mayorías y quórum en asambleas de accionistas', 'Los deberes de lealtad y diligencia de los directores societarios', 'La escisión y fusión como mecanismos de reorganización empresarial', 'El régimen de sociedades por acciones simplificadas (SAS)', 'Las cláusulas de arrastre (drag-along) y acompañamiento (tag-along) en acuerdos de accionistas', 'El concurso preventivo y la reestructuración de pasivos empresariales', 'La quiebra y el orden de privilegios entre acreedores', 'La oferta pública de adquisición (OPA) y la protección de accionistas minoritarios', 'El régimen de grupos económicos y sociedades vinculadas', 'La responsabilidad de los administradores societarios frente a terceros', 'Los programas de integridad y compliance corporativo', 'La disolución y liquidación de sociedades comerciales', 'Las estructuras holding y la planificación societaria transfronteriza', 'El due diligence legal en operaciones de M&A', 'Los pactos de socios en empresas de estructura familiar', 'Los criterios ambientales, sociales y de gobernanza (ESG) en la empresa']
+  };
+
+  const EXTENSION_TEMPLATES = [
+    (c, x) => c + ' en el marco de ' + x,
+    (c, x) => c + ': implicancias para ' + x,
+    (c, x) => 'El papel de ' + c.charAt(0).toLowerCase() + c.slice(1) + ' en ' + x,
+    (c, x) => c + ' frente a los desafíos de ' + x,
+    (c, x) => 'Lecturas contemporáneas sobre ' + c.charAt(0).toLowerCase() + c.slice(1) + ' en ' + x,
+    (c, x) => c + ' y su articulación con ' + x,
+    (c, x) => 'Tensiones entre ' + c.charAt(0).toLowerCase() + c.slice(1) + ' y ' + x
+  ];
+
+  /* Banco de contextos históricos, usado por las disciplinas de historia
+     en lugar del banco de contextos de consultoría. */
+  const CONTEXT_POOL_HISTORIA = [
+    'la Europa de entreguerras', 'el mundo bipolar de la Guerra Fría',
+    'los procesos de descolonización afroasiática', 'la expansión colonial europea del siglo XIX',
+    'el orden internacional de posguerra', 'las revoluciones atlánticas del siglo XVIII',
+    'la crisis del Antiguo Régimen', 'la Revolución Industrial británica',
+    'el imperialismo tardío decimonónico', 'la Restauración europea tras 1815',
+    'el auge de los nacionalismos del siglo XIX', 'la Gran Depresión de 1929',
+    'el ascenso de los totalitarismos de entreguerras', 'la Segunda Guerra Mundial',
+    'el proceso de integración europea', 'las dictaduras militares latinoamericanas',
+    'la globalización financiera de fines del siglo XX', 'el mundo multipolar del siglo XXI',
+    'la Revolución Rusa y el orden soviético', 'la desintegración de los imperios coloniales',
+    'las guerras de religión europeas', 'el sistema de Estados westfaliano',
+    'la expansión de los imperios ibéricos en América', 'la Ilustración y sus proyecciones políticas',
+    'el auge y caída del Imperio otomano', 'la modernización de Meiji en Japón',
+    'la Guerra Civil española', 'el Concierto Europeo del siglo XIX',
+    'las independencias hispanoamericanas', 'la reconfiguración geopolítica post-1989',
+    'la crisis del petróleo de los años setenta', 'el movimiento de países no alineados',
+    'la revolución digital y sus efectos geopolíticos', 'las migraciones masivas contemporáneas'
+  ];
+
+  const HISTORY_TEMPLATES = [
+    (c, x) => c + ' en el contexto de ' + x,
+    (c, x) => c + ': causas, desarrollo y consecuencias en ' + x,
+    (c, x) => 'Interpretaciones historiográficas de ' + c.charAt(0).toLowerCase() + c.slice(1) + ' durante ' + x,
+    (c, x) => c + ' y su impacto geopolítico en ' + x,
+    (c, x) => 'Debates historiográficos sobre ' + c.charAt(0).toLowerCase() + c.slice(1) + ' en ' + x,
+    (c, x) => c + ' frente a las tensiones de ' + x,
+    (c, x) => 'Continuidades y rupturas entre ' + c.charAt(0).toLowerCase() + c.slice(1) + ' y ' + x
+  ];
+
+  const HISTORY_CATEGORIES = new Set(['historia-politica', 'historia-mundial', 'historia-contemporanea']);
+
+  /* Genera hasta targetCount temas únicos cruzando conceptos x contextos x plantillas.
+     `seen` es un Set compartido: evita duplicados entre disciplinas y contra los 200 originales. */
+  function generateExtended(conceptPool, targetCount, seen, templates, contextPool){
+    const out = [];
+    outer:
+    for(const tpl of templates){
+      for(const c of conceptPool){
+        for(const x of contextPool){
+          const s = tpl(c, x);
+          if(!seen.has(s)){
+            seen.add(s);
+            out.push(s);
+            if(out.length >= targetCount) break outer;
+          }
+        }
+      }
+    }
+    return out;
+  }
+
+  /* FULL_DEFAULT_TOPICS: los 200 temas originales + ~500 generados por cada
+     una de las 17 disciplinas (≈8.700 temas en total, todos únicos). Las
+     disciplinas de historia usan un banco de contextos y plantillas propio,
+     con formulaciones historiográficas en lugar de las de consultoría. */
+  function buildFullDefaultTopics(){
+    const globalSeen = new Set(DEFAULT_TOPICS);
+    const objects = toTopicObjects(DEFAULT_TOPICS);
+    CATEGORY_META.forEach(cat => {
+      const pool = CONCEPT_POOLS[cat.key] || CONCEPT_POOLS['general'];
+      const useHistory = HISTORY_CATEGORIES.has(cat.key);
+      const templates = useHistory ? HISTORY_TEMPLATES : EXTENSION_TEMPLATES;
+      const contextPool = useHistory ? CONTEXT_POOL_HISTORIA : CONTEXT_POOL;
+      const generated = generateExtended(pool, 500, globalSeen, templates, contextPool);
+      generated.forEach(text => objects.push({ text: text, category: cat.key }));
+    });
+    return objects;
+  }
+
+  const FULL_DEFAULT_TOPICS = buildFullDefaultTopics();
+
+  function loadStoredTopics(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length >= 2){
+          return toTopicObjects(parsed);
+        }
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function persistTopics(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(allTopics.map(t => t.text)));
+    }catch(e){}
+  }
+
+  function loadStoredActiveCats(){
+    try{
+      const raw = localStorage.getItem(CATS_STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length > 0) return new Set(parsed);
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function persistActiveCats(){
+    try{
+      localStorage.setItem(CATS_STORAGE_KEY, JSON.stringify(Array.from(activeCategories)));
+    }catch(e){}
+  }
+
+  /* allTopics: universo completo de temas disponibles (objetos {text, category}) */
+  let allTopics = loadStoredTopics() || FULL_DEFAULT_TOPICS.slice();
+  /* activeCategories: disciplinas incluidas en el sorteo */
+  let activeCategories = loadStoredActiveCats() || new Set(CATEGORY_META.map(c => c.key));
+  /* topics: subconjunto de allTopics filtrado por activeCategories, usado por el carrete */
+  let topics = [];
+
+  function recomputeTopics(){
+    const filtered = allTopics.filter(t => activeCategories.has(t.category));
+    topics = (filtered.length >= 2) ? filtered : allTopics.slice();
+  }
+  recomputeTopics();
+
+  function updateTopicCount(){
+    if(topicCountEl){
+      topicCountEl.textContent = topics.length + ' de ' + allTopics.length + ' temas en el carrete';
+    }
+  }
+
+  /* ---------------------------------------------------------
+     2. DOM
+  --------------------------------------------------------- */
+  const viewport   = document.getElementById('reel-viewport');
+  const strip      = document.getElementById('reel-strip');
+  const spinBtn     = document.getElementById('spin-btn');
+  const customInput = document.getElementById('custom-input');
+  const addBtn        = document.getElementById('add-topics');
+  const saveBtn      = document.getElementById('save-topics');
+  const resetBtn      = document.getElementById('reset-topics');
+  const saveStatus     = document.getElementById('save-status');
+  const topicCountEl   = document.getElementById('topic-count');
+  const bulbRowTop    = document.getElementById('bulb-row-top');
+  const bulbRowBottom = document.getElementById('bulb-row-bottom');
+  const linkChatGPT   = document.getElementById('link-chatgpt');
+  const linkClaude    = document.getElementById('link-claude');
+  const linkGemini    = document.getElementById('link-gemini');
+  const linkPerplexity= document.getElementById('link-perplexity');
+  const copyPromptBtn = document.getElementById('copy-prompt-btn');
+  const developLinks  = document.getElementById('develop-links');
+  const developHint   = document.getElementById('develop-hint');
+  const topicCatBadge = document.getElementById('topic-cat-badge');
+  const legalCheckBtn   = document.getElementById('legal-check-btn');
+  const legalCheckPanel = document.getElementById('legal-check-panel');
+  const legalCheckBody  = document.getElementById('legal-check-body');
+  const legalCheckClose = document.getElementById('legal-check-close');
+  const categoryPanel = document.getElementById('category-panel');
+  const catAllBtn     = document.getElementById('cat-all-btn');
+  const catNoneBtn    = document.getElementById('cat-none-btn');
+  const catStatus     = document.getElementById('cat-status');
+
+  /* Bulb marquee lights (purely decorative, alternate lit pattern) */
+  function buildBulbs(container, count){
+    container.innerHTML = '';
+    for(let i=0;i<count;i++){
+      const b = document.createElement('div');
+      b.className = 'bulb' + (i % 2 === 0 ? ' lit' : '');
+      b.style.animationDelay = (i * 0.09) + 's';
+      container.appendChild(b);
+    }
+  }
+  buildBulbs(bulbRowTop, 26);
+  buildBulbs(bulbRowBottom, 26);
+
+  /* ---------------------------------------------------------
+     3. AUDIO — Web Audio API, 100% sintetizado
+  --------------------------------------------------------- */
+  let audioCtx = null;
+  function ctx(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+    return audioCtx;
+  }
+
+  function playTick(strength){
+    // strength: 0..1, ticks near el final son un poco más suaves/graves para
+    // sensación de "asentamiento". Usa onda triangular (pocos armónicos) en
+    // vez de cuadrada, y un pasa-banda suave en lugar de un pasa-altos crudo,
+    // para un "tock" cálido en vez de un chillido agudo.
+    const c = ctx();
+    const now = c.currentTime;
+
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    const bp = c.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 1000 - (1 - strength) * 150;
+    bp.Q.value = 1.1;
+
+    osc.type = 'triangle';
+    osc.frequency.value = 1150 - (1 - strength) * 200;
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.075 * (0.4 + strength * 0.6), now + 0.003);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
+
+    osc.connect(bp);
+    bp.connect(gain);
+    gain.connect(c.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.05);
+  }
+
+  function playWinChord(){
+    const c = ctx();
+    const now = c.currentTime;
+    const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+    freqs.forEach((f, i) => {
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = f;
+
+      const start = now + i * 0.045;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.14, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.9);
+
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.start(start);
+      osc.stop(start + 0.95);
+    });
+
+    // subtle sparkle on top
+    const sparkle = c.createOscillator();
+    const sGain = c.createGain();
+    sparkle.type = 'sine';
+    sparkle.frequency.setValueAtTime(1800, now);
+    sparkle.frequency.exponentialRampToValueAtTime(2600, now + 0.3);
+    sGain.gain.setValueAtTime(0.0001, now);
+    sGain.gain.exponentialRampToValueAtTime(0.05, now + 0.05);
+    sGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+    sparkle.connect(sGain);
+    sGain.connect(c.destination);
+    sparkle.start(now);
+    sparkle.stop(now + 0.55);
+  }
+
+  function playLeverPull(){
+    // sonido de inicio amigable estilo tragamonedas: un "clic" mecánico suave
+    // seguido de un campanilleo ascendente y brillante (nada de chillidos ásperos)
+    const c = ctx();
+    const now = c.currentTime;
+
+    // clic mecánico breve y grave (palanca), sin aspereza (onda seno, no sierra)
+    const click = c.createOscillator();
+    const clickGain = c.createGain();
+    click.type = 'sine';
+    click.frequency.setValueAtTime(190, now);
+    click.frequency.exponentialRampToValueAtTime(110, now + 0.09);
+    clickGain.gain.setValueAtTime(0.0001, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.09, now + 0.012);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    click.connect(clickGain);
+    clickGain.connect(c.destination);
+    click.start(now);
+    click.stop(now + 0.14);
+
+    // campanilleo alegre ascendente (tríada mayor brillante), tipo "ding" de casino
+    const chimeFreqs = [783.99, 987.77, 1174.66]; // G5 B5 D6
+    chimeFreqs.forEach((f, i) => {
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      const start = now + 0.07 + i * 0.065;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.1, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.26);
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.start(start);
+      osc.stop(start + 0.28);
+    });
+  }
+
+  function playReelRumble(duration){
+    // ruido de fondo suave y cálido mientras gira el carrete: se filtra en dos
+    // etapas (pasa-bajos + resonancia leve) para evitar la aspereza del ruido
+    // blanco crudo, y se le suma un colchón sinusoidal grave casi imperceptible
+    // que redondea el timbre y lo hace sentir más amigable, menos "estático".
+    const c = ctx();
+    const now = c.currentTime;
+    const bufferSize = Math.max(1, Math.floor(c.sampleRate * duration));
+    const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+    const data = buffer.getChannelData(0);
+    let prev = 0;
+    for(let i = 0; i < bufferSize; i++){
+      const white = Math.random() * 2 - 1;
+      // suavizado leve (leaky integrator) para quitarle el "chisporroteo" al ruido crudo
+      prev = prev * 0.82 + white * 0.18;
+      data[i] = prev;
+    }
+
+    const noise = c.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter1 = c.createBiquadFilter();
+    filter1.type = 'lowpass';
+    filter1.frequency.value = 360;
+    filter1.Q.value = 0.5;
+
+    const filter2 = c.createBiquadFilter();
+    filter2.type = 'lowpass';
+    filter2.frequency.value = 480;
+    filter2.Q.value = 0.3;
+
+    const gain = c.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.032, now + 0.5);
+    gain.gain.linearRampToValueAtTime(0.015, now + duration * 0.7);
+    gain.gain.linearRampToValueAtTime(0.0001, now + duration);
+
+    // colchón grave suave, tipo "motor" amigable, muy por debajo del ruido
+    const warmth = c.createOscillator();
+    const warmthGain = c.createGain();
+    warmth.type = 'sine';
+    warmth.frequency.setValueAtTime(78, now);
+    warmthGain.gain.setValueAtTime(0.0001, now);
+    warmthGain.gain.linearRampToValueAtTime(0.02, now + 0.5);
+    warmthGain.gain.linearRampToValueAtTime(0.008, now + duration * 0.7);
+    warmthGain.gain.linearRampToValueAtTime(0.0001, now + duration);
+
+    noise.connect(filter1);
+    filter1.connect(filter2);
+    filter2.connect(gain);
+    gain.connect(c.destination);
+
+    warmth.connect(warmthGain);
+    warmthGain.connect(c.destination);
+
+    noise.start(now);
+    noise.stop(now + duration);
+    warmth.start(now);
+    warmth.stop(now + duration);
+  }
+
+  function playCoinCascade(){
+    // cascada de monedas cayendo, como el pago de un tragamonedas
+    const c = ctx();
+    const now = c.currentTime;
+    const count = 12;
+    for(let i = 0; i < count; i++){
+      const t = now + 0.05 + Math.random() * 0.55 + i * 0.02;
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 1600 + Math.random() * 1600;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.08, t + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.start(t);
+      osc.stop(t + 0.25);
+    }
+  }
+
+  /* ---------------------------------------------------------
+     4. CARRETE — motor de animación
+  --------------------------------------------------------- */
+  let rowHeight = 0;
+  let reelPos = 0;              // posición continua (unidades = índices de tema)
+  let currentFloor = 0;         // floor(reelPos) al reposo
+  let spinning = false;
+  let lastTickFloor = null;
+  let lastTickTime = 0;
+
+  function mod(n, m){ return ((n % m) + m) % m; }
+
+  /* --- Prompt de formación experta: convierte al modelo en tutor experto
+     del tema sorteado, con comprensión conceptual, lógica y ejemplos --- */
+  function buildExpertPrompt(topicObj){
+    const catLabel = CATEGORY_LABEL[topicObj.category] || 'la disciplina correspondiente';
+    return 'Actuá como un experto de nivel internacional en ' + catLabel + ', formado para la consultoría estratégica de Nexus ("El arte de la política, el poder de la conexión"). '
+      + 'Tu tarea es convertirme en un experto sólido sobre el siguiente tema: "' + topicObj.text + '". '
+      + 'Desarrollalo con el mejor formato posible, mezclando profesionalismo e intelecto, siguiendo esta estructura: '
+      + '1) Definición precisa y marco conceptual del tema. '
+      + '2) Fundamentos lógicos: causas, mecanismos y relaciones internas que explican por qué funciona así. '
+      + '3) Al menos dos ejemplos concretos que lo ejemplifiquen (uno teórico/histórico y uno aplicado a la política, el derecho o la consultoría corporativa actual). '
+      + '4) Un glosario de 5 a 8 palabras clave del tema, cada una remarcada en negrita y con su definición breve. '
+      + '5) Implicancias estratégicas: cómo se aplica este conocimiento en la práctica política, corporativa o de persuasión. '
+      + 'Usá un tono profesional, riguroso e intelectualmente denso, sin relleno ni frases vacías.';
+  }
+
+  /* --- Enlaces "Formar experto en ChatGPT / Claude / Gemini / Perplexity" con el tema elegido --- */
+  let currentPromptText = '';
+
+  let currentLegalTopic = null;
+
+  function updateDevelopLinks(topicObj){
+    currentPromptText = buildExpertPrompt(topicObj);
+    const encoded = encodeURIComponent(currentPromptText);
+    linkChatGPT.href = 'https://chatgpt.com/?q=' + encoded;
+    linkClaude.href = 'https://claude.ai/new?q=' + encoded;
+    // Gemini no soporta pre-carga de prompt vía URL de forma nativa: se abre la app
+    // y el prompt queda disponible con el botón "Copiar prompt".
+    linkGemini.href = 'https://gemini.google.com/app';
+    linkPerplexity.href = 'https://www.perplexity.ai/search?q=' + encoded;
+    developLinks.classList.remove('opacity-40', 'pointer-events-none');
+    developLinks.classList.add('opacity-100');
+    if(developHint) developHint.textContent = 'Tema: ' + topicObj.text;
+    if(topicCatBadge){
+      topicCatBadge.textContent = CATEGORY_LABEL[topicObj.category] || 'General';
+      topicCatBadge.classList.remove('opacity-0');
+      topicCatBadge.classList.add('opacity-100');
+    }
+    currentLegalTopic = topicObj;
+    if(legalCheckBtn){
+      const isLegal = LEGAL_REALTIME_CATEGORIES.has(topicObj.category);
+      legalCheckBtn.classList.toggle('hidden', !isLegal);
+      legalCheckBtn.classList.toggle('flex', isLegal);
+    }
+    if(legalCheckPanel) legalCheckPanel.classList.add('hidden');
+  }
+
+  function resetDevelopLinks(){
+    developLinks.classList.remove('opacity-100');
+    developLinks.classList.add('opacity-40', 'pointer-events-none');
+    if(developHint) developHint.textContent = 'Girá para habilitar los enlaces';
+    if(topicCatBadge){
+      topicCatBadge.classList.remove('opacity-100');
+      topicCatBadge.classList.add('opacity-0');
+    }
+    currentLegalTopic = null;
+    if(legalCheckBtn){ legalCheckBtn.classList.add('hidden'); legalCheckBtn.classList.remove('flex'); }
+    if(legalCheckPanel) legalCheckPanel.classList.add('hidden');
+  }
+
+  /* --- Verificación de vigencia legal en tiempo real vía la API de Claude
+     con búsqueda web activada. Solo se ofrece para disciplinas normativas
+     (ver LEGAL_REALTIME_CATEGORIES). --- */
+  async function runLegalCheck(topicObj){
+    if(!legalCheckPanel || !legalCheckBody) return;
+    legalCheckPanel.classList.remove('hidden');
+    legalCheckBody.textContent = 'Consultando fuentes actualizadas…';
+    legalCheckBtn.disabled = true;
+
+    const catLabel = CATEGORY_LABEL[topicObj.category] || 'derecho';
+
+    try{
+      let text = '';
+      if(RUNNING_IN_CLAUDE_ARTIFACT){
+        // Dentro de la vista previa de Claude.ai el fetch a api.anthropic.com
+        // es interceptado y autenticado automáticamente por el entorno.
+        const system = 'Sos un asistente que verifica la vigencia normativa/regulatoria ACTUAL de temas jurídicos y de inversión, con foco en Argentina cuando corresponda y en normativa internacional cuando sea relevante. Usá la herramienta de búsqueda web para confirmar el estado vigente antes de responder. Respondé en español, en un máximo de 160 palabras, en prosa clara (sin markdown), mencionando: 1) el estado normativo actual, 2) cambios recientes o proyectos en trámite si los hay, 3) la fuente y su fecha aproximada. Cerrá siempre aclarando que es información general y no asesoramiento legal formal.';
+        const userMsg = 'Tema: "' + topicObj.text + '". Disciplina: ' + catLabel + '. Dame un panorama preciso y actualizado a hoy de su estado normativo o regulatorio vigente.';
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            system: system,
+            messages: [{ role: 'user', content: userMsg }],
+            tools: [{ type: 'web_search_20250305', name: 'web_search' }]
+          })
+        });
+        const data = await response.json();
+        text = (data.content || [])
+          .filter(block => block.type === 'text')
+          .map(block => block.text)
+          .join('\n')
+          .trim();
+      } else {
+        // Fuera de Claude.ai: el navegador nunca debe tener la API key.
+        // Se llama al backend propio, que sí la tiene guardada como secreto
+        // (ver /functions/api/legal-check.js).
+        const response = await fetch('/api/legal-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: topicObj.text, category: catLabel })
+        });
+        if(response.ok){
+          const data = await response.json();
+          text = (data && data.text) || '';
+        }
+      }
+      legalCheckBody.textContent = text || 'No se pudo obtener una verificación en este momento. Probá de nuevo en unos segundos.';
+    }catch(e){
+      legalCheckBody.textContent = 'No se pudo consultar la verificación legal en este momento (sin conexión con el servicio). Probá de nuevo en unos segundos.';
+    }finally{
+      legalCheckBtn.disabled = false;
+    }
+  }
+
+  if(legalCheckBtn){
+    legalCheckBtn.addEventListener('click', function(){
+      if(currentLegalTopic) runLegalCheck(currentLegalTopic);
+    });
+  }
+  if(legalCheckClose){
+    legalCheckClose.addEventListener('click', function(){
+      legalCheckPanel.classList.add('hidden');
+    });
+  }
+
+  if(copyPromptBtn){
+    copyPromptBtn.addEventListener('click', async function(){
+      if(!currentPromptText) return;
+      const original = copyPromptBtn.innerHTML;
+      try{
+        await navigator.clipboard.writeText(currentPromptText);
+        copyPromptBtn.textContent = '¡Copiado! Pegalo donde quieras';
+      }catch(e){
+        copyPromptBtn.textContent = 'No se pudo copiar';
+      }
+      setTimeout(() => { copyPromptBtn.innerHTML = original; }, 2200);
+    });
+  }
+
+  /* Gemini no admite pre-carga de prompt por URL (limitación real de Google,
+     no un bug de esta app): la mejor solución posible es copiar el prompt
+     automáticamente al portapapeles y abrir Gemini en una pestaña nueva, para
+     que solo haga falta pegar (Ctrl/Cmd+V) en el cuadro de texto. */
+  if(linkGemini){
+    linkGemini.addEventListener('click', async function(e){
+      e.preventDefault();
+      if(currentPromptText){
+        try{ await navigator.clipboard.writeText(currentPromptText); }catch(err){}
+      }
+      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
+    });
+  }
+
+  /* ---------------------------------------------------------
+     5b. VOZ — Web Speech API (100% gratuita, nativa del navegador)
+     No existe forma de usar la voz propietaria de ChatGPT fuera de la app
+     de OpenAI: es una voz privativa, no distribuible. En su lugar, esto
+     selecciona automáticamente la voz en español de mejor calidad
+     disponible en el navegador/sistema operativo (las voces "neurales" o
+     "Google" suelen sonar más naturales) y lee el tema en voz alta apenas
+     el carrete se detiene.
+  --------------------------------------------------------- */
+  const VOICE_PREF_KEY = 'nexus_voz_activa_v1';
+  let voiceEnabled = true;
+  try{ voiceEnabled = localStorage.getItem(VOICE_PREF_KEY) !== '0'; }catch(e){}
+  let selectedVoice = null;
+  let lastSpokenText = '';
+
+  function pickBestVoice(){
+    if(!window.speechSynthesis) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    if(!voices.length) return null;
+    const esVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('es'));
+    const pool = esVoices.length ? esVoices : voices;
+    const scored = pool.map(v => {
+      const n = (v.name || '').toLowerCase();
+      let score = 0;
+      if(n.includes('neural') || n.includes('natural') || n.includes('premium')) score += 5;
+      if(n.includes('google')) score += 3;
+      if(v.lang && v.lang.toLowerCase() === 'es-us') score += 2;
+      if(v.lang && v.lang.toLowerCase().startsWith('es-')) score += 1;
+      if(v.localService === false) score += 1;
+      return { v: v, score: score };
+    }).sort((a, b) => b.score - a.score);
+    return scored[0] ? scored[0].v : pool[0];
+  }
+
+  if(window.speechSynthesis){
+    selectedVoice = pickBestVoice();
+    window.speechSynthesis.onvoiceschanged = function(){ selectedVoice = pickBestVoice(); };
+  }
+
+  function speakTopic(text){
+    if(!voiceEnabled || !window.speechSynthesis || !text) return;
+    try{
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      if(selectedVoice) utter.voice = selectedVoice;
+      utter.lang = (selectedVoice && selectedVoice.lang) || 'es-ES';
+      utter.rate = 0.98;
+      utter.pitch = 1.0;
+      utter.volume = 1.0;
+      lastSpokenText = text;
+      window.speechSynthesis.speak(utter);
+    }catch(e){}
+  }
+
+  function updateVoiceToggleUI(){
+    const icon = document.getElementById('voice-toggle-icon');
+    const label = document.getElementById('voice-toggle-label');
+    if(icon) icon.textContent = voiceEnabled ? '🔊' : '🔇';
+    if(label) label.textContent = voiceEnabled ? 'Voz activada' : 'Voz desactivada';
+  }
+  updateVoiceToggleUI();
+
+  const voiceToggleBtn = document.getElementById('voice-toggle-btn');
+  if(voiceToggleBtn){
+    voiceToggleBtn.addEventListener('click', function(){
+      voiceEnabled = !voiceEnabled;
+      try{ localStorage.setItem(VOICE_PREF_KEY, voiceEnabled ? '1' : '0'); }catch(e){}
+      updateVoiceToggleUI();
+      if(!voiceEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+    });
+  }
+
+  const replayVoiceBtn = document.getElementById('replay-voice-btn');
+  if(replayVoiceBtn){
+    replayVoiceBtn.addEventListener('click', function(){
+      if(!window.speechSynthesis) return;
+      const text = lastSpokenText || (developHint ? developHint.textContent.replace(/^Tema:\s*/, '') : '');
+      if(!text) return;
+      try{
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        if(selectedVoice) utter.voice = selectedVoice;
+        utter.lang = (selectedVoice && selectedVoice.lang) || 'es-ES';
+        utter.rate = 0.98;
+        utter.pitch = 1.0;
+        utter.volume = 1.0;
+        window.speechSynthesis.speak(utter);
+      }catch(e){}
+    });
+  }
+
+  /* ---------------------------------------------------------
+     5c. SISTEMA DE PUNTOS Y HISTORIAL — gamificación tipo videojuego
+  --------------------------------------------------------- */
+  const SCORE_STORAGE_KEY = 'nexus_puntaje_v1';
+  const HISTORY_STORAGE_KEY = 'nexus_historial_v1';
+  const SEEN_STORAGE_KEY = 'nexus_vistos_v1';
+  const LEVEL_STEP = 120;
+  const POINTS_NEW = 15;
+  const POINTS_REPEAT = 5;
+  const HISTORY_MAX = 300;
+
+  /* Rangos desbloqueables por nivel: cada tanto (nivel 3, 5, 7, 9...) se
+     desbloquea un título nuevo, con nombres propios de Nexus (sin usar
+     nombres de franquicias registradas) en tono "guerrero de consultoría". */
+  const RANK_TIERS = [
+    { minLevel: 1,  name: 'Iniciado' },
+    { minLevel: 3,  name: 'Operativo' },
+    { minLevel: 5,  name: 'Berserker del Nexus' },
+    { minLevel: 7,  name: 'Estratega' },
+    { minLevel: 9,  name: 'Vanguardia' },
+    { minLevel: 11, name: 'Arconte' },
+    { minLevel: 14, name: 'Emisario Supremo' },
+    { minLevel: 18, name: 'Leyenda del Nexus' }
+  ];
+
+  function rankForLevel(lvl){
+    let current = RANK_TIERS[0];
+    for(const tier of RANK_TIERS){
+      if(lvl >= tier.minLevel) current = tier;
+    }
+    return current.name;
+  }
+
+  function showRankToast(name){
+    const toast = document.getElementById('rank-toast');
+    const toastName = document.getElementById('rank-toast-name');
+    if(!toast || !toastName) return;
+    toastName.textContent = name;
+    toastName.classList.remove('glow-pop');
+    void toastName.offsetWidth; // reinicia la animación
+    toastName.classList.add('glow-pop');
+    toast.classList.remove('hidden');
+    playWinChord();
+    setTimeout(() => { toast.classList.add('hidden'); }, 3200);
+  }
+
+  function loadScore(){
+    try{
+      const n = parseInt(localStorage.getItem(SCORE_STORAGE_KEY), 10);
+      if(!isNaN(n) && n >= 0) return n;
+    }catch(e){}
+    return 0;
+  }
+  function persistScore(){
+    try{ localStorage.setItem(SCORE_STORAGE_KEY, String(totalScore)); }catch(e){}
+  }
+  function loadHistory(){
+    try{
+      const parsed = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
+      if(Array.isArray(parsed)) return parsed;
+    }catch(e){}
+    return [];
+  }
+  function persistHistory(){
+    try{ localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyLog.slice(0, HISTORY_MAX))); }catch(e){}
+  }
+  function loadSeenSet(){
+    try{
+      const parsed = JSON.parse(localStorage.getItem(SEEN_STORAGE_KEY));
+      if(Array.isArray(parsed)) return new Set(parsed);
+    }catch(e){}
+    return new Set();
+  }
+  function persistSeenSet(){
+    try{ localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify(Array.from(seenTopics))); }catch(e){}
+  }
+
+  let totalScore = loadScore();
+  let historyLog = loadHistory();       // más reciente primero
+  let seenTopics = loadSeenSet();       // Set de textos de temas ya vistos
+
+  function levelFromScore(score){ return Math.floor(score / LEVEL_STEP) + 1; }
+  function scoreIntoLevel(score){ return score % LEVEL_STEP; }
+
+  function updateScoreHUD(){
+    const scoreBadge = document.getElementById('score-badge');
+    const levelBadge = document.getElementById('level-badge');
+    const rankBadge  = document.getElementById('rank-badge');
+    const seenBadge  = document.getElementById('seen-badge');
+    const lvl = levelFromScore(totalScore);
+    const into = scoreIntoLevel(totalScore);
+    if(scoreBadge) scoreBadge.textContent = '★ ' + totalScore.toLocaleString('es-AR') + ' PTS';
+    if(levelBadge) levelBadge.textContent = 'NIVEL ' + lvl + ' · ' + into + '/' + LEVEL_STEP;
+    if(rankBadge) rankBadge.textContent = rankForLevel(lvl);
+    if(seenBadge) seenBadge.textContent = seenTopics.size.toLocaleString('es-AR') + ' TEMAS VISTOS';
+  }
+
+  function formatTimeAgo(ts){
+    const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+    if(diffSec < 60) return 'ahora';
+    const m = Math.floor(diffSec / 60);
+    if(m < 60) return 'hace ' + m + ' min';
+    const h = Math.floor(m / 60);
+    if(h < 24) return 'hace ' + h + ' h';
+    return 'hace ' + Math.floor(h / 24) + ' d';
+  }
+
+  function renderHistoryPanel(){
+    const list = document.getElementById('history-list');
+    const countEl = document.getElementById('history-count');
+    if(!list) return;
+    list.innerHTML = '';
+    if(historyLog.length === 0){
+      const empty = document.createElement('p');
+      empty.className = 'text-[10px] text-neutral-700 italic';
+      empty.textContent = 'Todavía no giraste el carrete.';
+      list.appendChild(empty);
+    } else {
+      historyLog.forEach(function(entry, i){
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 text-[10px] px-2 py-1.5 rounded-sm bg-white/[0.02] border border-white/5';
+
+        const idxEl = document.createElement('span');
+        idxEl.className = 'text-neutral-700 w-7 shrink-0';
+        idxEl.textContent = '#' + (historyLog.length - i);
+
+        const txt = document.createElement('span');
+        txt.className = 'text-neutral-300 flex-1 truncate';
+        txt.textContent = entry.text;
+        txt.title = entry.text;
+
+        const cat = document.createElement('span');
+        cat.className = 'text-neutral-600 shrink-0 hidden sm:inline';
+        cat.textContent = CATEGORY_LABEL[entry.category] || '';
+
+        const pts = document.createElement('span');
+        pts.className = 'shrink-0 ' + (entry.isNew ? 'text-amber-300' : 'text-neutral-600');
+        pts.textContent = '+' + entry.points;
+
+        const time = document.createElement('span');
+        time.className = 'text-neutral-700 shrink-0 w-16 text-right hidden sm:inline';
+        time.textContent = formatTimeAgo(entry.ts);
+
+        row.appendChild(idxEl);
+        row.appendChild(txt);
+        row.appendChild(cat);
+        row.appendChild(pts);
+        row.appendChild(time);
+        list.appendChild(row);
+      });
+    }
+    if(countEl) countEl.textContent = historyLog.length + ' giro(s) registrado(s)';
+  }
+
+  function registerTopicSeen(topicObj){
+    const prevLevel = levelFromScore(totalScore);
+    const isNew = !seenTopics.has(topicObj.text);
+    const pts = isNew ? POINTS_NEW : POINTS_REPEAT;
+    totalScore += pts;
+    if(isNew) seenTopics.add(topicObj.text);
+    historyLog.unshift({ text: topicObj.text, category: topicObj.category, points: pts, isNew: isNew, ts: Date.now() });
+    if(historyLog.length > HISTORY_MAX) historyLog.length = HISTORY_MAX;
+    persistScore();
+    persistHistory();
+    persistSeenSet();
+    updateScoreHUD();
+    renderHistoryPanel();
+
+    const newLevel = levelFromScore(totalScore);
+    if(newLevel > prevLevel){
+      const prevRank = rankForLevel(prevLevel);
+      const newRank = rankForLevel(newLevel);
+      if(newRank !== prevRank) showRankToast(newRank);
+    }
+    syncResultadoCompartido();
+  }
+
+  const clearHistoryBtn = document.getElementById('clear-history-btn');
+  if(clearHistoryBtn){
+    clearHistoryBtn.addEventListener('click', function(){
+      if(spinning) return;
+      if(!window.confirm('¿Vaciar historial y puntaje? Esta acción no se puede deshacer.')) return;
+      totalScore = 0;
+      historyLog = [];
+      seenTopics = new Set();
+      try{
+        localStorage.removeItem(SCORE_STORAGE_KEY);
+        localStorage.removeItem(HISTORY_STORAGE_KEY);
+        localStorage.removeItem(SEEN_STORAGE_KEY);
+      }catch(e){}
+      updateScoreHUD();
+      renderHistoryPanel();
+      flashStatus('Historial y puntaje reiniciados');
+    });
+  }
+
+  function updateFooterStats(){
+    const footerStats = document.getElementById('footer-stats');
+    if(footerStats){
+      footerStats.textContent = 'Nexus Consultora · ' + allTopics.length.toLocaleString('es-AR')
+        + ' temas · ' + CATEGORY_META.length + ' disciplinas · audio sintetizado';
+    }
+  }
+
+  /* --- Bolsa de sorteo sin repetición: se recorren todos los temas
+     antes de que alguno vuelva a salir --- */
+  let bag = [];
+  let lastShownIndex = null;
+
+  function shuffleArray(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function refillBag(){
+    bag = shuffleArray(Array.from({ length: topics.length }, (_, i) => i));
+    // evita que el primer tema del nuevo ciclo repita el último mostrado
+    if(bag.length > 1 && bag[bag.length - 1] === lastShownIndex){
+      const swapAt = Math.floor(Math.random() * (bag.length - 1));
+      const tmp = bag[bag.length - 1];
+      bag[bag.length - 1] = bag[swapAt];
+      bag[swapAt] = tmp;
+    }
+  }
+
+  function nextTopicIndex(){
+    if(bag.length === 0 || bag.length > topics.length){
+      refillBag();
+    }
+    const idx = bag.pop();
+    lastShownIndex = idx;
+    return idx;
+  }
+
+  function measure(){
+    rowHeight = viewport.clientHeight / 3;
+  }
+  window.addEventListener('resize', function(){ measure(); invalidateFitCache(); });
+
+  function topicAt(idx){
+    const n = topics.length;
+    return topics[mod(idx, n)].text;
+  }
+
+  /* ---------------------------------------------------------
+     4b. AJUSTE DINÁMICO DE TIPOGRAFÍA
+     Mide el ancho real del texto (canvas) y reduce el tamaño de fuente
+     hasta que el nombre completo del tema entra, sin cortarse, dentro
+     del carril entre las líneas naranjas (rowHeight). Si aun al tamaño
+     mínimo no entra en una sola línea, permite el ajuste a 2-3 líneas.
+  --------------------------------------------------------- */
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  let fitCache = new Map();
+  function invalidateFitCache(){ fitCache.clear(); }
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(invalidateFitCache);
+  }
+
+  function wrappedLineCount(text, size, maxWidth){
+    measureCtx.font = '900 ' + size + 'px "Archivo Black", sans-serif';
+    const words = text.split(' ');
+    const spaceWidth = measureCtx.measureText(' ').width;
+    let lines = 1, lineWidth = 0;
+    for(const w of words){
+      const ww = measureCtx.measureText(w).width;
+      if(lineWidth > 0 && lineWidth + spaceWidth + ww > maxWidth){
+        lines++;
+        lineWidth = ww;
+      } else {
+        lineWidth += (lineWidth > 0 ? spaceWidth : 0) + ww;
+      }
+    }
+    return lines;
+  }
+
+  function fitText(text, isCenter){
+    const key = (isCenter ? 'C:' : 'S:') + text;
+    const cached = fitCache.get(key);
+    if(cached) return cached;
+
+    const vw = Math.max(160, viewport.clientWidth || 320);
+    const maxWidth = Math.max(80, vw - 44); // deja el padding lateral del carril
+    const maxPx = isCenter
+      ? (vw < 480 ? 30 : vw < 768 ? 42 : 52)
+      : (vw < 480 ? 18 : vw < 768 ? 24 : 30);
+    const minPx = isCenter ? 12 : 9;
+    const rh = rowHeight > 0 ? rowHeight : 80;
+
+    let result = null;
+    for(let size = maxPx; size >= minPx; size--){
+      const lines = wrappedLineCount(text, size, maxWidth);
+      const totalHeight = lines * size * 1.14;
+      if(lines <= 3 && totalHeight <= rh * 0.94){
+        result = { size: size, lines: lines };
+        break;
+      }
+    }
+    if(!result){
+      // último recurso: tamaño mínimo, deje las líneas que hagan falta
+      result = { size: minPx, lines: wrappedLineCount(text, minPx, maxWidth) };
+    }
+    fitCache.set(key, result);
+    return result;
+  }
+
+  /* Renderiza el carrete dado un reelPos continuo */
+  function render(pos, opts){
+    opts = opts || {};
+    const floor = Math.floor(pos);
+    const frac = pos - floor;
+    const shift = frac * rowHeight;
+
+    strip.innerHTML = '';
+    strip.style.transform = 'translateY(' + (-shift) + 'px)';
+
+    // offsets -2..2 para buffer suave en los bordes
+    for(let o = -2; o <= 2; o++){
+      const idx = floor + o;
+      const div = document.createElement('div');
+      const isCenter = (o === 0);
+      const isNear = (o === -1 || o === 1);
+
+      const topicText = topicAt(idx);
+      const fit = fitText(topicText, isCenter);
+
+      div.className = 'reel-item';
+      div.style.top = ((o + 2) * rowHeight - rowHeight) + 'px';
+      div.style.height = rowHeight + 'px';
+      div.style.fontSize = fit.size + 'px';
+      div.style.lineHeight = '1.14';
+
+      let opacity, blur, weight, color;
+      if(isCenter){
+        opacity = 1; blur = 0; weight = 'font-black'; color = 'text-white';
+      } else if(isNear){
+        opacity = 0.28; blur = '0.5px'; weight = 'font-bold'; color = 'text-neutral-400';
+      } else {
+        opacity = 0.06; blur = '1px'; weight = 'font-bold'; color = 'text-neutral-600';
+      }
+
+      div.style.opacity = opacity;
+      div.style.filter = 'blur(' + blur + ')';
+      div.classList.add(weight);
+      div.classList.add(color);
+      div.classList.add('display-font');
+
+      const span = document.createElement('span');
+      span.textContent = topicText;
+      span.style.lineHeight = '1.14';
+      if(isCenter && opts.landed){
+        span.classList.add('glow-pop');
+        span.style.color = '#fff6e6';
+      }
+      div.appendChild(span);
+      strip.appendChild(div);
+    }
+
+    return floor;
+  }
+
+  function initialRender(){
+    measure();
+    reelPos = 0;
+    currentFloor = render(reelPos);
+    updateTopicCount();
+  }
+
+  /* ---------------------------------------------------------
+     5. GIRO — física con desaceleración por fricción
+  --------------------------------------------------------- */
+  function easeOutFriction(t){
+    // curva tipo fricción suave: rápido al inicio, larga cola de frenado
+    return 1 - Math.pow(1 - t, 4.2);
+  }
+
+  function spin(){
+    if(spinning || topics.length === 0) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    saveStatus.textContent = '';
+
+    ctx(); // asegura contexto de audio desbloqueado por gesto del usuario
+
+    const n = topics.length;
+    const targetIndex = nextTopicIndex();
+    const startFloorMod = mod(currentFloor, n);
+    let diff = mod(targetIndex - startFloorMod, n);
+    if(diff === 0) diff = n; // evita giros triviales
+
+    const loops = 7 + Math.floor(Math.random() * 3); // 7-9 vueltas completas
+    const totalDistance = loops * n + diff;
+
+    const startPos = reelPos;
+    const endPos = startPos + totalDistance;
+
+    const duration = 5200 + Math.random() * 700; // 5.2s - 5.9s
+    const t0 = performance.now();
+
+    playLeverPull();
+    playReelRumble(duration / 1000);
+
+    lastTickFloor = Math.floor(startPos);
+    lastTickTime = 0;
+
+    function frame(now){
+      const elapsed = now - t0;
+      const t = Math.min(1, elapsed / duration);
+      const eased = easeOutFriction(t);
+
+      reelPos = startPos + (endPos - startPos) * eased;
+      const floorNow = render(reelPos);
+
+      // tics: cada vez que un tema cruza la línea central
+      if(floorNow !== lastTickFloor){
+        const stepsCrossed = floorNow - lastTickFloor;
+        const timeSinceLastTick = elapsed - lastTickTime;
+        // throttle para no saturar el audio cuando la velocidad es muy alta
+        if(stepsCrossed > 0 && timeSinceLastTick > 26){
+          const strength = 1 - t; // más fuerte al inicio, más suave al final
+          playTick(Math.max(0.15, strength));
+          lastTickFloor = floorNow;
+          lastTickTime = elapsed;
+        } else if(stepsCrossed > 0){
+          lastTickFloor = floorNow;
+        }
+      }
+
+      if(t < 1){
+        requestAnimationFrame(frame);
+      } else {
+        // snap final exacto
+        reelPos = endPos;
+        currentFloor = render(reelPos, { landed: true });
+        playWinChord();
+        playCoinCascade();
+        const landedTopic = topics[mod(currentFloor, topics.length)];
+        updateDevelopLinks(landedTopic);
+        registerTopicSeen(landedTopic);
+        speakTopic(landedTopic.text);
+        spinning = false;
+        spinBtn.disabled = false;
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  spinBtn.addEventListener('click', spin);
+
+  /* ---------------------------------------------------------
+     6. PANEL DE TEMAS PERSONALIZADOS
+  --------------------------------------------------------- */
+  function flashStatus(msg){
+    saveStatus.textContent = msg;
+    setTimeout(() => { saveStatus.textContent = ''; }, 2600);
+  }
+
+  function afterTopicsChanged(){
+    recomputeTopics();
+    bag = [];
+    reelPos = 0;
+    currentFloor = render(reelPos);
+    updateTopicCount();
+    resetDevelopLinks();
+  }
+
+  addBtn.addEventListener('click', function(){
+    if(spinning) return;
+    const raw = customInput.value || '';
+    const parsed = raw.split(',').map(s => s.trim()).filter(Boolean);
+    if(parsed.length === 0){
+      flashStatus('Escribe al menos un tema para agregar.');
+      return;
+    }
+    const existingLower = new Set(allTopics.map(t => t.text.toLowerCase()));
+    const nuevos = parsed.filter(t => !existingLower.has(t.toLowerCase()));
+    if(nuevos.length === 0){
+      flashStatus('Esos temas ya están en la lista.');
+      return;
+    }
+    allTopics = allTopics.concat(toTopicObjects(nuevos));
+    persistTopics();
+    customInput.value = '';
+    afterTopicsChanged();
+    flashStatus(nuevos.length + ' tema(s) agregado(s) · ' + allTopics.length + ' en total ✓');
+  });
+
+  saveBtn.addEventListener('click', function(){
+    if(spinning) return;
+    const raw = customInput.value || '';
+    const parsed = raw.split(',').map(s => s.trim()).filter(Boolean);
+    if(parsed.length < 2){
+      flashStatus('Escribe al menos 2 temas separados por comas.');
+      return;
+    }
+    allTopics = toTopicObjects(parsed);
+    persistTopics();
+    lastShownIndex = null;
+    customInput.value = '';
+    afterTopicsChanged();
+    flashStatus(allTopics.length + ' temas guardados ✓');
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(spinning) return;
+    allTopics = FULL_DEFAULT_TOPICS.slice();
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    lastShownIndex = null;
+    customInput.value = '';
+    afterTopicsChanged();
+    flashStatus('Valores predeterminados restablecidos');
+  });
+
+  /* ---------------------------------------------------------
+     6b. PANEL DE DISCIPLINAS
+  --------------------------------------------------------- */
+  function countByCategory(catKey){
+    return allTopics.filter(t => t.category === catKey).length;
+  }
+
+  function renderCategoryPanel(){
+    if(!categoryPanel) return;
+    categoryPanel.innerHTML = '';
+    CATEGORY_META.forEach(cat => {
+      const n = countByCategory(cat.key);
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'cat-chip' + (activeCategories.has(cat.key) ? ' active' : '');
+      chip.innerHTML = '<span>' + cat.label + '</span><span class="cat-count">' + n + '</span>';
+      chip.addEventListener('click', function(){
+        if(spinning) return;
+        if(activeCategories.has(cat.key)){
+          if(activeCategories.size > 1){ activeCategories.delete(cat.key); }
+        } else {
+          activeCategories.add(cat.key);
+        }
+        persistActiveCats();
+        chip.classList.toggle('active', activeCategories.has(cat.key));
+        afterTopicsChanged();
+        updateCatStatus();
+      });
+      categoryPanel.appendChild(chip);
+    });
+  }
+
+  function updateCatStatus(){
+    if(!catStatus) return;
+    const total = CATEGORY_META.length;
+    catStatus.textContent = activeCategories.size + ' de ' + total + ' disciplinas activas';
+  }
+
+  if(catAllBtn){
+    catAllBtn.addEventListener('click', function(){
+      if(spinning) return;
+      activeCategories = new Set(CATEGORY_META.map(c => c.key));
+      persistActiveCats();
+      renderCategoryPanel();
+      afterTopicsChanged();
+      updateCatStatus();
+      flashStatus('Todas las disciplinas activadas');
+    });
+  }
+
+  if(catNoneBtn){
+    catNoneBtn.addEventListener('click', function(){
+      if(spinning) return;
+      activeCategories = new Set();
+      persistActiveCats();
+      renderCategoryPanel();
+      afterTopicsChanged();
+      updateCatStatus();
+      flashStatus('Todas las disciplinas desactivadas · el carrete usa el universo completo hasta que actives alguna');
+    });
+  }
+
+  /* ---------------------------------------------------------
+     7. REGISTRO DE PARTICIPANTES (grupo cerrado, almacenamiento compartido)
+  --------------------------------------------------------- */
+  const PROFILE_KEY = 'nexus_perfil';
+  const REG_PREFIX  = 'nexus_registro_';
+
+  const registroOverlay   = document.getElementById('registro-overlay');
+  const registroNombre    = document.getElementById('registro-nombre');
+  const registroApellido  = document.getElementById('registro-apellido');
+  const registroInstagram = document.getElementById('registro-instagram');
+  const registroBtn       = document.getElementById('registro-btn');
+  const registroError     = document.getElementById('registro-error');
+
+  function slugify(s){
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 40) || 'anonimo';
+  }
+
+  async function getProfile(){
+    try{
+      const res = await storageAdapter.get(PROFILE_KEY, false);
+      return res ? JSON.parse(res.value) : null;
+    }catch(e){ return null; }
+  }
+
+  async function saveProfile(nombre, apellido, instagram){
+    const key = REG_PREFIX + slugify(nombre + '-' + apellido) + '_' + Date.now();
+    const perfil = { nombre: nombre, apellido: apellido, instagram: instagram, ts: Date.now(), regKey: key };
+    try{
+      await storageAdapter.set(PROFILE_KEY, JSON.stringify(perfil), false);
+      const resultado = {
+        nombre: nombre, apellido: apellido, instagram: instagram, ts: perfil.ts,
+        score: 0, nivel: 1, rango: rankForLevel(1), temasVistos: 0, ultimaActividad: perfil.ts
+      };
+      await storageAdapter.set(key, JSON.stringify(resultado), true);
+    }catch(e){}
+    return perfil;
+  }
+
+  function showRegistro(){
+    return new Promise(resolve => {
+      registroOverlay.classList.remove('hidden');
+      registroBtn.addEventListener('click', async function onSubmit(){
+        const nombre = (registroNombre.value || '').trim();
+        const apellido = (registroApellido.value || '').trim();
+        const instagram = (registroInstagram.value || '').trim();
+        if(nombre.length < 2){
+          registroError.textContent = 'Escribí tu nombre para continuar.';
+          return;
+        }
+        registroBtn.disabled = true;
+        const perfil = await saveProfile(nombre, apellido, instagram);
+        registroBtn.removeEventListener('click', onSubmit);
+        registroOverlay.classList.add('hidden');
+        resolve(perfil);
+      });
+    });
+  }
+
+  async function ensureRegistro(){
+    const existing = await getProfile();
+    if(existing && existing.nombre) return existing;
+    return showRegistro();
+  }
+
+  let currentProfile = null;
+
+  /* Sincroniza puntaje, nivel, rango y temas vistos del participante actual
+     al registro compartido, para que el modo programador pueda ver los
+     resultados de todos los participantes, no solo quién se registró. */
+  async function syncResultadoCompartido(){
+    if(!currentProfile || !currentProfile.regKey) return;
+    try{
+      const lvl = levelFromScore(totalScore);
+      const resultado = {
+        nombre: currentProfile.nombre,
+        apellido: currentProfile.apellido,
+        instagram: currentProfile.instagram,
+        ts: currentProfile.ts,
+        score: totalScore,
+        nivel: lvl,
+        rango: rankForLevel(lvl),
+        temasVistos: seenTopics.size,
+        ultimaActividad: Date.now()
+      };
+      await storageAdapter.set(currentProfile.regKey, JSON.stringify(resultado), true);
+    }catch(e){}
+  }
+
+  /* ---------------------------------------------------------
+     7b. MODO PROGRAMADOR OCULTO — 5 clics rápidos en el logo
+  --------------------------------------------------------- */
+  // El código de acceso YA NO vive en este archivo. Dentro de Claude.ai
+  // (sin backend propio) se usa un valor local como red de contención,
+  // pero fuera de Claude.ai la verificación real ocurre en el servidor
+  // (/api/dev-auth), que compara contra un secreto configurado en el
+  // hosting — nunca visible en el HTML/JS que llega al navegador.
+  const DEV_SECRET_CODE_FALLBACK = '1507'; // solo se usa dentro de la vista previa de Claude.ai
+  const adminPanels = document.querySelectorAll('.admin-only-panel');
+  let devUnlocked = false;
+
+  function revealAdminPanels(){
+    devUnlocked = true;
+    adminPanels.forEach(p => p.classList.remove('hidden'));
+  }
+  const nexusLogo     = document.getElementById('nexus-logo');
+  const devOverlay    = document.getElementById('dev-overlay');
+  const devCloseBtn   = document.getElementById('dev-close-btn');
+  const devCount      = document.getElementById('dev-count');
+  const devList       = document.getElementById('dev-list');
+  const devSearch     = document.getElementById('dev-search');
+  const devSortBtn    = document.getElementById('dev-sort-btn');
+  const devExportBtn  = document.getElementById('dev-export-btn');
+  const devExportJsonBtn = document.getElementById('dev-export-json-btn');
+  const devRefreshBtn = document.getElementById('dev-refresh-btn');
+  const devStats       = document.getElementById('dev-stats');
+
+  function renderDevStats(){
+    if(!devStats) return;
+    if(!devRegistros.length){
+      devStats.classList.add('hidden');
+      devStats.classList.remove('flex');
+      return;
+    }
+    const total = devRegistros.length;
+    const avgTemas = (devRegistros.reduce((s, r) => s + (r.temasVistos || 0), 0) / total).toFixed(1);
+    const rangoCount = {};
+    devRegistros.forEach(r => {
+      const rango = r.rango || rankForLevel(r.nivel || 1);
+      rangoCount[rango] = (rangoCount[rango] || 0) + 1;
+    });
+    const rangoTop = Object.entries(rangoCount).sort((a, b) => b[1] - a[1])[0];
+    devStats.classList.remove('hidden');
+    devStats.classList.add('flex');
+    devStats.innerHTML =
+      '<span class="cat-badge">' + total + ' participantes</span>' +
+      '<span class="cat-badge">' + avgTemas + ' temas vistos (prom.)</span>' +
+      (rangoTop ? '<span class="cat-badge">Rango más común: ' + rangoTop[0] + ' (' + rangoTop[1] + ')</span>' : '');
+  }
+
+  let devRegistros = [];
+  let devSortMode = 'recientes'; // 'recientes' | 'alfabetico' | 'puntaje'
+
+  let logoClicks = [];
+  if(nexusLogo){
+    nexusLogo.addEventListener('click', function(){
+      const now = Date.now();
+      logoClicks = logoClicks.filter(t => now - t < 2500);
+      logoClicks.push(now);
+      if(logoClicks.length >= 5){
+        logoClicks = [];
+        unlockDevMode();
+      }
+    });
+  }
+
+  async function unlockDevMode(){
+    const code = window.prompt('Código de modo programador:');
+    if(!code) return;
+    if(RUNNING_IN_CLAUDE_ARTIFACT){
+      // Sin backend propio disponible en la vista previa de Claude.ai:
+      // comparación local como única opción posible en este entorno.
+      if(code === DEV_SECRET_CODE_FALLBACK){
+        revealAdminPanels();
+        logDevAccess();
+        openDevPanel();
+      }
+      return;
+    }
+    try{
+      const res = await fetch('/api/dev-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+      });
+      const data = res.ok ? await res.json() : { ok: false };
+      if(data && data.ok){
+        revealAdminPanels();
+        logDevAccess();
+        openDevPanel();
+      } else {
+        window.alert('Código incorrecto.');
+      }
+    }catch(e){
+      window.alert('No se pudo verificar el código (sin conexión con el servidor).');
+    }
+  }
+
+  function nombreCompleto(r){
+    return [r.nombre, r.apellido].filter(Boolean).join(' ').trim() || '—';
+  }
+
+  function instagramLink(r){
+    const handle = (r.instagram || '').replace(/^@/, '').trim();
+    return handle ? 'https://instagram.com/' + handle : null;
+  }
+
+  function renderDevList(){
+    const term = (devSearch.value || '').toLowerCase().trim();
+    let filtered = devRegistros.filter(r => {
+      if(!term) return true;
+      return nombreCompleto(r).toLowerCase().includes(term)
+        || (r.instagram || '').toLowerCase().includes(term);
+    });
+    filtered = filtered.slice().sort((a, b) => {
+      if(devSortMode === 'alfabetico'){
+        return nombreCompleto(a).localeCompare(nombreCompleto(b), 'es');
+      }
+      if(devSortMode === 'puntaje'){
+        return (b.score || 0) - (a.score || 0);
+      }
+      return (b.ts || 0) - (a.ts || 0);
+    });
+
+    devCount.textContent = filtered.length + ' de ' + devRegistros.length + ' participante(s) registrado(s)';
+    renderDevStats();
+    devList.innerHTML = '';
+    if(filtered.length === 0){
+      devList.innerHTML = '<p class="text-neutral-600">Sin resultados.</p>';
+      return;
+    }
+    filtered.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'flex flex-col gap-1 border-b border-white/5 py-2';
+      const fecha = r.ultimaActividad ? new Date(r.ultimaActividad).toLocaleString('es-AR') : (r.ts ? new Date(r.ts).toLocaleString('es-AR') : '');
+      const igHref = instagramLink(r);
+      const igHtml = igHref
+        ? '<a href="' + igHref + '" target="_blank" rel="noopener noreferrer" class="text-amber-300/80 hover:text-amber-300 hover:underline">' + (r.instagram || '') + '</a>'
+        : '<span class="text-neutral-500">—</span>';
+      const top = document.createElement('div');
+      top.className = 'flex items-center justify-between gap-3';
+      top.innerHTML = '<span class="text-neutral-200 flex-1">' + nombreCompleto(r) + '</span>'
+        + '<span class="flex-1">' + igHtml + '</span>'
+        + '<span class="text-neutral-700 text-[10px]">' + fecha + '</span>';
+      const bottom = document.createElement('div');
+      bottom.className = 'flex items-center gap-3 text-[10px] text-neutral-500';
+      const rango = r.rango || rankForLevel(r.nivel || 1);
+      bottom.innerHTML = '<span class="text-amber-300/70">★ ' + (r.score || 0) + ' pts</span>'
+        + '<span>Nivel ' + (r.nivel || 1) + '</span>'
+        + '<span class="text-neutral-400">' + rango + '</span>'
+        + '<span>' + (r.temasVistos || 0) + ' temas vistos</span>';
+      row.appendChild(top);
+      row.appendChild(bottom);
+      devList.appendChild(row);
+    });
+  }
+
+  async function openDevPanel(){
+    devOverlay.classList.remove('hidden');
+    devList.innerHTML = '<p class="text-neutral-600">Cargando participantes…</p>';
+    devCount.textContent = '';
+    try{
+      const listing = await storageAdapter.list(REG_PREFIX, true);
+      const keys = (listing && listing.keys) || [];
+      if(keys.length === 0 && !RUNNING_IN_CLAUDE_ARTIFACT){
+        devList.innerHTML = '<p class="text-neutral-600">Sin participantes registrados todavía, o el backend de almacenamiento no está configurado (ver /functions/api/storage.js).</p>';
+        devRegistros = [];
+        devCount.textContent = '0 de 0 participante(s) registrado(s)';
+        return;
+      }
+      const registros = [];
+      for(const k of keys){
+        try{
+          const res = await storageAdapter.get(k, true);
+          if(res) registros.push(JSON.parse(res.value));
+        }catch(e){}
+      }
+      devRegistros = registros;
+      renderDevList();
+    }catch(e){
+      devList.innerHTML = '<p class="text-neutral-600">No se pudo leer el registro compartido.</p>';
+    }
+  }
+
+  if(devCloseBtn){
+    devCloseBtn.addEventListener('click', function(){ devOverlay.classList.add('hidden'); });
+  }
+  if(devSearch){
+    devSearch.addEventListener('input', renderDevList);
+  }
+  if(devSortBtn){
+    devSortBtn.addEventListener('click', function(){
+      const order = ['recientes', 'alfabetico', 'puntaje'];
+      devSortMode = order[(order.indexOf(devSortMode) + 1) % order.length];
+      const labels = { recientes: 'Ordenar: recientes', alfabetico: 'Ordenar: A-Z', puntaje: 'Ordenar: puntaje' };
+      devSortBtn.textContent = labels[devSortMode];
+      renderDevList();
+    });
+  }
+  if(devRefreshBtn){
+    devRefreshBtn.addEventListener('click', openDevPanel);
+  }
+  if(devExportBtn){
+    devExportBtn.addEventListener('click', function(){
+      const header = 'Nombre,Apellido,Instagram,Puntaje,Nivel,Rango,Temas vistos,Fecha de registro,Última actividad\n';
+      const rows = devRegistros.map(r => {
+        const fechaReg = r.ts ? new Date(r.ts).toISOString() : '';
+        const fechaAct = r.ultimaActividad ? new Date(r.ultimaActividad).toISOString() : '';
+        const esc = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+        return [esc(r.nombre), esc(r.apellido), esc(r.instagram), esc(r.score || 0), esc(r.nivel || 1), esc(r.rango || rankForLevel(r.nivel || 1)), esc(r.temasVistos || 0), esc(fechaReg), esc(fechaAct)].join(',');
+      }).join('\n');
+      const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nexus_participantes.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+  if(devExportJsonBtn){
+    devExportJsonBtn.addEventListener('click', function(){
+      const blob = new Blob([JSON.stringify(devRegistros, null, 2)], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nexus_participantes.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /* Registro de accesos al modo programador: cada vez que alguien entra
+     con éxito queda una entrada con fecha, para poder auditar quién usó
+     el panel. Se guarda como dato compartido, visible en el propio panel. */
+  const DEV_ACCESS_PREFIX = 'nexus_dev_acceso_';
+  async function logDevAccess(){
+    try{
+      const key = DEV_ACCESS_PREFIX + Date.now();
+      await storageAdapter.set(key, JSON.stringify({ ts: Date.now() }), true);
+    }catch(e){}
+  }
+
+  /* ---------------------------------------------------------
+     8. INIT
+  --------------------------------------------------------- */
+  function initAll(){
+    renderCategoryPanel();
+    updateCatStatus();
+    updateFooterStats();
+    updateScoreHUD();
+    renderHistoryPanel();
+    initialRender();
+  }
+
+  let bootstrapped = false;
+  async function bootstrap(){
+    if(bootstrapped) return;
+    bootstrapped = true;
+    currentProfile = await ensureRegistro();
+    initAll();
+    syncResultadoCompartido();
+  }
+
+  window.addEventListener('load', bootstrap);
+  // por si 'load' ya disparó (artefactos en iframe)
+  if(document.readyState === 'complete'){ bootstrap(); }
+
+})();
+</script>
+
+</body>
+</html>
